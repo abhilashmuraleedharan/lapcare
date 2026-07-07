@@ -43,10 +43,11 @@ Import rules (enforced by import-linter; violations fail CI):
 
 | Task | Read |
 |---|---|
-| Adding a provider | `docs/guides/adding-a-provider.md` (exists from M1) |
-| Adding a UI page | `docs/guides/adding-a-page.md` (exists from M1) |
-| Adding a diagnostic check | `docs/guides/adding-a-diagnostic.md` (exists from M4) |
-| Capturing hardware fixtures | `docs/guides/capturing-fixtures.md` (exists from M1) |
+| Adding a provider | `docs/guides/adding-a-provider.md` |
+| Adding a UI page | `docs/guides/adding-a-page.md` |
+| Adding a diagnostic check | `docs/guides/adding-a-diagnostic.md` (arrives in M4) |
+| Capturing hardware fixtures | `docs/guides/capturing-fixtures.md` |
+| Hardware quirk knowledge | `docs/modules/providers.md` — check BEFORE assuming a field exists |
 | Anything architectural | `ARCHITECTURE.md`, then the relevant ADR |
 | Security-relevant change | `docs/security-design.md` + ADR-0004 |
 | Testing approach | `docs/testing.md` |
