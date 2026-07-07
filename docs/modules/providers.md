@@ -38,6 +38,33 @@ the SystemIdentityProvider port. Either signal suffices.
 | E16 Gen 2 exposes fan/thermal/kbdlight/led attributes (future M7/M9 surface) | attribute listing in fixture |
 | E-series driver surface may differ from T/X-series — never assume | docs/testing.md rule |
 
+## battery_sysfs (`BatterySysfs`) — implements BatteryWearProvider
+
+Walks `/sys/class/power_supply/*`, filters `type == Battery`; reads unit family
+(energy_*/charge_*), cycle_count, model/manufacturer/technology. Never reads
+`serial_number`.
+
+| Quirk | Evidence |
+|---|---|
+| E16 Gen 2 reports **energy_*** (µWh); other machines report charge_* (µAh) — both real, energy preferred when both | E16 fixture vs synthetic-charge-units |
+| `ucsi-source-psy-USBC*` power-supply entries exist and must be type-filtered | E16 live probe |
+| `status` can be `"Not charging"` on AC below the charge threshold — a distinct state, not an error | E16 at 79% |
+| Some EC firmware reports cycle_count -1 (or 0) → normalize to None | synthetic-pathological BAT1 |
+| Fresh/recalibrated packs report full above design → analysis clamps wear at 0 | synthetic-pathological BAT0 |
+| `power_now` is 0 when not charging → no time estimates | E16 live probe |
+
+## upower (`UPowerDbus`) — implements BatteryStatusProvider
+
+D-Bus `org.freedesktop.UPower`: EnumerateDevices + per-device Properties.GetAll;
+Type==2 && PowerSupply filter; change signals coalesced to `on_change` on the
+GTK main thread (subscribe from the main thread only — see platform/dbus.py).
+
+| Quirk | Evidence |
+|---|---|
+| TimeToEmpty/TimeToFull of 0 mean "unknown" → None | UPower semantics; dbusmock tests |
+| Pending-charge/discharge states map to NOT_CHARGING (threshold ThinkPads) | state map |
+| No system bus (containers/CI) → ProviderUnavailable(TOOL_MISSING, upower); consumers must treat live status as optional | container validation |
+
 ## pci_usb (`PciUsbTools`) — implements DeviceInventoryProvider
 
 Runs `lspci -mm` and `lsusb` (packages: pciutils, usbutils) via the audited runner.

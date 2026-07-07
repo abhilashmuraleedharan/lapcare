@@ -28,7 +28,7 @@ be filtered by `type`; power_now=0 when not charging.
       (wear %, class, cycles, capacities), wear-over-time chart (cairo DrawingArea),
       per-panel degradation (UPower absent ≠ dead page), snapshot recording on load;
       VM tests; smoke extended.
-- [ ] C7 `feat: capture tool learns battery files` + docs (module docs quirk entries).
+- [x] C7 `feat: capture tool learns battery files` + docs (module docs quirk entries).
 - [ ] C8 `docs: close milestone M2; release v0.3.0 (PUBLIC ALPHA)` — version bumps,
       CHANGELOG, ROADMAP flip, merge, tag, GitHub pre-release with .deb artifacts.
 

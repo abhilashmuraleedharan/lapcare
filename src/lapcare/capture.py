@@ -54,6 +54,27 @@ _OS_INFO_FILES = (
 )
 _HOSTNAME_FILE = "proc/sys/kernel/hostname"
 _TP_ACPI_DIR = "sys/devices/platform/thinkpad_acpi"
+_POWER_SUPPLY_DIR = "sys/class/power_supply"
+# serial_number deliberately absent (identifier — never captured by default).
+_POWER_SUPPLY_FILES = (
+    "type",
+    "status",
+    "online",
+    "capacity",
+    "cycle_count",
+    "energy_full",
+    "energy_full_design",
+    "energy_now",
+    "charge_full",
+    "charge_full_design",
+    "charge_now",
+    "power_now",
+    "model_name",
+    "manufacturer",
+    "technology",
+    "present",
+    "voltage_min_design",
+)
 
 
 def _slug(text: str) -> str:
@@ -117,6 +138,14 @@ async def capture(
         target.write_text("\n".join(listing) + "\n")
     else:
         notes.append("thinkpad_acpi driver not present on this machine")
+
+    # battery_sysfs: every power-supply entry, manifest files only
+    ps_dir = root / _POWER_SUPPLY_DIR
+    if ps_dir.is_dir():
+        bat_dest = out / "battery_sysfs" / machine
+        for entry in sorted(ps_dir.iterdir()):
+            for name in _POWER_SUPPLY_FILES:
+                _copy_file(root, f"{_POWER_SUPPLY_DIR}/{entry.name}/{name}", bat_dest)
 
     # pci_usb via the audited runner
     pu_dest = out / "pci_usb" / machine
