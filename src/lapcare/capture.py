@@ -76,7 +76,7 @@ async def capture(
     root: Path = Path("/"),
     runner: ToolRunner = run_tool,
     include_identifiers: bool = False,
-) -> Path:
+) -> str:
     """Capture all sources into ``out``; return the machine slug directory name."""
     family = read_str(root / _DMI_DIR / "product_family") or read_str(
         root / _DMI_DIR / "product_name"
@@ -147,7 +147,7 @@ def run_capture(out: Path, include_identifiers: bool = False) -> int:
     """Synchronous CLI entry used by app.main. Returns an exit code."""
     machine = asyncio.run(capture(out, include_identifiers=include_identifiers))
     log.info("fixtures captured machine=%s dir=%s", machine, out)
-    print(f"Captured fixtures for '{machine}' into {out}/")  # noqa: T201 — CLI output
+    print(f"Captured fixtures for '{machine}' into {out}/")
     if include_identifiers:
         print("WARNING: identifiers included — do NOT attach this capture to public issues.")
     return 0
