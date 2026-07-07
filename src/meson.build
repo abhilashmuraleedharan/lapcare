@@ -17,7 +17,13 @@ py.install_sources(
   ],
   subdir: 'lapcare/core',
 )
-py.install_sources(['lapcare/providers/__init__.py'], subdir: 'lapcare/providers')
+py.install_sources(
+  [
+    'lapcare/providers/__init__.py',
+    'lapcare/providers/os_info.py',
+  ],
+  subdir: 'lapcare/providers',
+)
 py.install_sources(
   [
     'lapcare/platform/__init__.py',
