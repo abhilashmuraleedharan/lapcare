@@ -17,7 +17,7 @@ tag `v0.1.0`.
 - [x] C8 `ci: fast-lane workflow`
 - [x] C9 `spike: per-LTS stack validation; ADR-0007`
 - [x] C10 `feat: application shell with logging`
-- [ ] C11 `feat: platform async scheduler per ADR-0007`
+- [x] C11 `feat: platform async scheduler per ADR-0007`
 - [ ] C12 `feat: navigation shell and reference page (four-state pattern)`
 - [ ] C13 `test: xvfb smoke test in CI`
 - [ ] C14 `build: Debian packaging skeleton and full CI lane`
