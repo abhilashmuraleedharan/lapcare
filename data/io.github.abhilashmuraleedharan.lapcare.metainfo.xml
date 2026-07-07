@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<component type="desktop-application">
+  <id>io.github.abhilashmuraleedharan.lapcare</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Lapcare</name>
+  <summary>Battery health, firmware updates and diagnostics for ThinkPads</summary>
+  <description>
+    <p>
+      Lapcare gives ThinkPad owners the system insight they lost when they left
+      Lenovo Vantage behind: hardware information, battery health and wear
+      analysis, firmware updates via fwupd/LVFS, storage health, one-click
+      diagnostics, and exportable diagnostic reports — in one native window.
+    </p>
+    <p>
+      Lapcare wraps the excellent hardware tooling Linux already has (fwupd,
+      UPower, smartctl, sysfs) behind one coherent, modern interface. Every
+      feature degrades gracefully on missing tools or unsupported hardware.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.abhilashmuraleedharan.lapcare.desktop</launchable>
+  <url type="homepage">https://github.com/abhilashmuraleedharan/lapcare</url>
+  <url type="bugtracker">https://github.com/abhilashmuraleedharan/lapcare/issues</url>
+  <url type="vcs-browser">https://github.com/abhilashmuraleedharan/lapcare</url>
+  <developer id="io.github.abhilashmuraleedharan">
+    <name>Abhilash Muraleedharan</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" type="development" date="2026-07-07">
+      <description>
+        <p>Milestone M0: project skeleton and development rails. Not a usable release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

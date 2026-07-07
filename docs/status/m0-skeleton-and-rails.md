@@ -12,7 +12,7 @@ tag `v0.1.0`.
 - [x] C3 `docs: architecture document and decision records`
 - [x] C4 `docs: agent guide, contributor guide, roadmap, milestone tracker` (this commit)
 - [x] C5 `chore: GitHub templates and automation config`
-- [ ] C6 `build: Meson skeleton and Python package layout`
+- [x] C6 `build: Meson skeleton and Python package layout`
 - [ ] C7 `chore: lint, type, import-contract, and test tooling`
 - [ ] C8 `ci: fast-lane workflow`
 - [ ] C9 `spike: per-LTS stack validation; ADR-0007`

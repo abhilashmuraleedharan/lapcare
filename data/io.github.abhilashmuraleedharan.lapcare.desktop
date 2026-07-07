@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Lapcare
+Comment=Battery health, firmware updates and diagnostics for ThinkPads
+Exec=lapcare
+Icon=io.github.abhilashmuraleedharan.lapcare
+Terminal=false
+Type=Application
+Categories=System;Utility;GTK;
+Keywords=battery;firmware;bios;thinkpad;diagnostics;hardware;smart;
+StartupNotify=true
