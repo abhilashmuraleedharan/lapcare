@@ -35,3 +35,9 @@ bug report should become a regression fixture.
 A per-release checklist executed on real hardware (maintainer machines + community testers
 recruited via the hardware-report issue template). Grows from M1; lives in this file as the
 matrix takes shape.
+
+**Primary reference machine: ThinkPad E16 Gen 2 (maintainer's laptop).** Every feature must
+work on this model before a milestone closes — it is the first fixture source and the first
+manual-matrix entry. Note for providers: the E-series can differ from T/X-series in
+thinkpad_acpi surface (fan reporting, LED set) — never assume T-series behavior is universal;
+that's what the fixture corpus is for.
