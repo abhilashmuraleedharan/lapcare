@@ -46,6 +46,23 @@ authorization. The MVP is read-only: Lapcare observes your hardware, it does not
 
 (Documents land during milestone M0 — links go live as they are committed.)
 
+## Building from source (development)
+
+Supported build/runtime targets are Ubuntu 24.04 and 26.04 (see `ARCHITECTURE.md`).
+
+```sh
+./run                # build + launch (needs the toolchain: see tools/install-deps.sh)
+./check              # lint + types + import contracts + tests (mirrors CI fast lane)
+
+# On any host with Docker (e.g. an older Ubuntu):
+./run --lts 24.04
+./check --lts 26.04
+```
+
+CI builds installable `.deb` packages for both LTS releases on every push to
+`main` (Actions → artifacts). Contributor workflow: `CONTRIBUTING.md`; AI
+agents start at `AGENTS.md`.
+
 ## License
 
 GPL-3.0-or-later. See `LICENSE`.
