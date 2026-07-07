@@ -1,21 +1,27 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Fast lane: every PR, newest supported LTS, mirrors ./check (+ meson data
-# tests, which are seconds). The full lane (both-LTS matrix + .deb build)
-# arrives in M0 Commit 14 and runs on main/nightly/tags.
+# Two lanes (docs/release.md):
+# - fast-lane: every PR, newest LTS only, mirrors ./check + meson tests + smoke.
+# - full-lane: main pushes, nightly, tags, manual dispatch — both-LTS matrix,
+#   plus .deb build and install-launch verification.
 name: CI
 
 on:
   pull_request:
   push:
     branches: [main]
+    tags: ["v*"]
+  schedule:
+    - cron: "30 3 * * *" # nightly full lane (runs on default branch)
+  workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
   fast-lane:
     name: fast-lane
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     container: ubuntu:26.04
     timeout-minutes: 15
@@ -41,3 +47,57 @@ jobs:
         run: |
           xvfb-run -a dbus-run-session env LAPCARE_SMOKE_TEST=1 GTK_A11Y=none \
             python3 -m pytest tests/smoke -v
+
+  full-lane:
+    name: full-lane (${{ matrix.lts }})
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    container: ubuntu:${{ matrix.lts }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        lts: ["24.04", "26.04"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: sh tools/install-deps.sh
+
+      - name: Install QA tooling
+        run: python3 -m pip install --break-system-packages --no-cache-dir -r requirements-dev.txt
+
+      - name: check (ruff, mypy, import-linter, pytest)
+        run: ./check
+
+      - name: meson build and data tests
+        run: |
+          meson setup build
+          meson compile -C build
+          meson test -C build --print-errorlogs
+
+      - name: smoke test (xvfb)
+        run: |
+          xvfb-run -a dbus-run-session env LAPCARE_SMOKE_TEST=1 GTK_A11Y=none \
+            python3 -m pytest tests/smoke -v
+
+      - name: Build .deb
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends build-essential debhelper devscripts
+          dpkg-buildpackage -us -uc -b
+          mkdir -p dist-deb
+          mv ../lapcare_*.deb dist-deb/
+
+      - name: Install .deb and launch installed app
+        run: |
+          apt-get install -y ./dist-deb/lapcare_*.deb
+          xvfb-run -a dbus-run-session env LAPCARE_AUTO_QUIT_MS=2500 LAPCARE_SMOKE=1 \
+            GTK_A11Y=none lapcare --verbose
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lapcare-deb-ubuntu-${{ matrix.lts }}
+          path: dist-deb/*.deb
+          retention-days: 30
