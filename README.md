@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml/badge.svg)](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml)
 
-> **Status: pre-alpha.** Nothing to install yet — the project is under active initial
-> development. The first announced release will be the public alpha (v0.3.0); see the
-> roadmap below.
+> **Status: public alpha (v0.3.0).** Read-only, zero privileged operations. Dashboard,
+> Battery, and Hardware pages are usable today; see [Planned features](#planned-features)
+> and `ROADMAP.md` for what's next.
 
 **Lapcare** is a native Linux desktop application that gives ThinkPad owners the system
 insight and hardware management they lost when they left Lenovo Vantage behind: hardware
@@ -21,17 +21,23 @@ rather than reinventing them.
 
 [fwupd]: https://fwupd.org
 
-## Planned MVP features
+## Available now (v0.3.0)
 
-- System overview and full hardware information
-- Battery health, wear analysis, and wear history
-- Firmware/BIOS update management (fwupd/LVFS)
-- Storage SMART/NVMe health
-- One-click diagnostics with an explainable health dashboard
-- Diagnostic report export (redacted by default)
+- System overview: model, BIOS, OS, kernel, uptime, ThinkPad detection (Dashboard)
+- Battery health: live charge status, wear analysis, health classification, cycle count,
+  daily wear history with chart, dual-battery support (Battery)
+- Full hardware information: DMI identity, CPU/memory, PCI/USB inventory (Hardware)
+
+## Planned features
+
+- Firmware/BIOS update management (fwupd/LVFS) — M3
+- Storage SMART/NVMe health — M4
+- One-click diagnostics with an explainable health dashboard — M4
+- Diagnostic report export (redacted by default) — M4
 
 Every feature degrades gracefully on missing tools, unsupported hardware, or declined
-authorization. The MVP is read-only: Lapcare observes your hardware, it does not mutate it.
+authorization. Through 1.0, Lapcare is read-only: it observes your hardware, it does not
+mutate it.
 
 ## Project documents
 
@@ -44,7 +50,18 @@ authorization. The MVP is read-only: Lapcare observes your hardware, it does not
 | `AGENTS.md` | Entry point for AI coding agents |
 | `DECISIONS.md` | Index of architecture decision records |
 
-(Documents land during milestone M0 — links go live as they are committed.)
+## Installing the alpha
+
+Download the `.deb` for your Ubuntu release from the
+[v0.3.0 release page](https://github.com/abhilashmuraleedharan/lapcare/releases/tag/v0.3.0)
+and install it:
+
+```sh
+sudo apt install ./lapcare_0.3.0_all-ubuntu-24.04.deb   # or -ubuntu-26.04.deb
+```
+
+A PPA is planned for the 1.0 release (see `docs/release.md`); until then, GitHub Releases
+is the distribution channel.
 
 ## Building from source (development)
 
