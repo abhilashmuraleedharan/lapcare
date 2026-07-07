@@ -22,7 +22,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       platform/files.py (size-limited reads, None-on-missing); tests.
 - [x] C4 `provider: os_info` — /etc/os-release + /proc (kernel, uptime, hostname,
       CPU model/counts, memory total); root-path injectable; fixture tests.
-- [ ] C5 `provider: dmi` — /sys/class/dmi/id identity fields (all Optional;
+- [x] C5 `provider: dmi` — /sys/class/dmi/id identity fields (all Optional;
       product_serial expected PERMISSION_DENIED unprivileged); fixture tests.
 - [ ] C6 `provider: thinkpad_acpi (detection only)` — driver presence + DMI vendor
       cross-check → ThinkpadInfo; fixture tests incl. non-ThinkPad fixture.
