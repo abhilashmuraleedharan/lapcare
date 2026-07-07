@@ -1,0 +1,8 @@
+# Install-path options for distro packagers (see docs/release.md).
+# polkitdir is consumed from milestone M4, when the privileged helper and its
+# polkit policy ship; declared now so packaging interfaces stay stable.
+option('polkitdir',
+  type: 'string',
+  value: '',
+  description: 'Directory for polkit action files (empty: $datadir/polkit-1/actions)',
+)

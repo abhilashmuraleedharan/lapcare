@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<schemalist gettext-domain="lapcare">
+  <schema id="io.github.abhilashmuraleedharan.lapcare"
+          path="/io/github/abhilashmuraleedharan/lapcare/">
+    <key name="window-width" type="i">
+      <default>980</default>
+      <summary>Window width</summary>
+    </key>
+    <key name="window-height" type="i">
+      <default>640</default>
+      <summary>Window height</summary>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>false</default>
+      <summary>Window maximized</summary>
+    </key>
+  </schema>
+</schemalist>

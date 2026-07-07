@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Launch lapcare from the source tree.
+#   ./run [app args]              native (requires Ubuntu 24.04+ toolchain)
+#   ./run --lts 24.04 [app args]  inside a validation container (any host with docker)
+set -eu
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+
+if [ "${1:-}" = "--lts" ]; then
+    LTS="${2:?usage: ./run --lts <24.04|26.04> [app args]}"
+    shift 2
+    exec "${HERE}/tools/dev-container.sh" "${LTS}" ./run "$@"
+fi
+
+cd "${HERE}"
+PYTHONPATH="${HERE}/src" exec python3 -m lapcare "$@"
