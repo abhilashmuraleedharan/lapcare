@@ -57,5 +57,7 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     assert "smoke: visited all pages" in output, output
     assert "smoke: cycled all states" in output, output  # reference page states
     assert "dashboard ready" in output, output
-    assert "battery ready" in output, output
+    # Battery: laptops/local containers reach ready; CI runner VMs have no
+    # battery and correctly reach the no-battery unavailable state.
+    assert "battery ready" in output or "battery unavailable: no batteries" in output, output
     assert "hardware ready" in output, output

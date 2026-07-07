@@ -162,6 +162,7 @@ class BatteryViewModel(PageViewModel):
         wear_list, status_list, history = data
 
         if not wear_list:
+            log.debug("battery unavailable: no batteries on this system")
             self.show_unavailable(
                 _("No batteries detected on this system."),
                 _("Nothing to do — battery features need a battery."),
