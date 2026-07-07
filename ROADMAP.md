@@ -33,9 +33,10 @@ from real code at end of M1.
 *Objective:* Dashboard page (model, BIOS version, kernel, uptime, quick stats) + Hardware
 page (DMI identity, CPU/memory summary, PCI/USB inventory). Providers: `dmi`, `os_info`,
 `pci_usb`, `thinkpad_acpi` (detection only). Graceful banner on non-ThinkPads.
-*Acceptance:* correct data on 2+ real ThinkPads; every panel handles `unavailable`; fixture
-governance (schema, capture-time redaction, review checklist) in place before the first
-community capture. *Docs:* module docs for shipped providers; `docs/guides/` recipes
+*Acceptance:* correct data on 2+ real ThinkPads, which must include the **ThinkPad E16
+Gen 2** (the maintainer's machine and the project's primary reference hardware — see
+`docs/testing.md`); every panel handles `unavailable`; fixture governance (schema,
+capture-time redaction, review checklist) in place before the first community capture. *Docs:* module docs for shipped providers; `docs/guides/` recipes
 extracted from the real code.
 
 ## M2 — Battery Health & Wear Analysis
