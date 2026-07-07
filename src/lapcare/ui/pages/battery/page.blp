@@ -1,0 +1,84 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Battery: per-battery groups are built in code (dual-battery support means
+// dynamic count); the blueprint provides the four-state shell.
+using Gtk 4.0;
+using Adw 1;
+
+template $LapcareBatteryPage: Adw.Bin {
+  Adw.ToolbarView {
+    content: Gtk.Box {
+      orientation: vertical;
+
+      Adw.Banner status_banner {}
+
+      Gtk.Stack stack {
+        vexpand: true;
+        transition-type: crossfade;
+
+        Gtk.StackPage {
+          name: "loading";
+
+          child: Gtk.Box {
+            orientation: vertical;
+            valign: center;
+            spacing: 12;
+
+            Gtk.Spinner {
+              spinning: true;
+              halign: center;
+              width-request: 32;
+              height-request: 32;
+            }
+
+            Gtk.Label {
+              label: _("Reading battery information…");
+
+              styles [
+                "dim-label",
+              ]
+            }
+          };
+        }
+
+        Gtk.StackPage {
+          name: "ready";
+
+          child: Gtk.ScrolledWindow {
+            hscrollbar-policy: never;
+
+            child: Adw.Clamp {
+              maximum-size: 800;
+
+              child: Gtk.Box battery_container {
+                orientation: vertical;
+                spacing: 24;
+                margin-top: 24;
+                margin-bottom: 24;
+                margin-start: 12;
+                margin-end: 12;
+              };
+            };
+          };
+        }
+
+        Gtk.StackPage {
+          name: "unavailable";
+
+          child: Adw.StatusPage unavailable_status {
+            icon-name: "battery-missing-symbolic";
+            title: _("No Battery Information");
+          };
+        }
+
+        Gtk.StackPage {
+          name: "error";
+
+          child: Adw.StatusPage error_status {
+            icon-name: "dialog-error-symbolic";
+            title: _("Could Not Read Battery Information");
+          };
+        }
+      }
+    };
+  }
+}

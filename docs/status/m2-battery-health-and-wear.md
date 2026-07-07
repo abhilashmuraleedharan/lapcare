@@ -24,7 +24,7 @@ be filtered by `type`; power_now=0 when not charging.
       UPower live status + change signals; python-dbusmock tests.
 - [x] C5 `feat(platform): SQLite HistoryStore` — daily wear snapshots under XDG data dir,
       idempotent per (date, battery), survives restart; tests.
-- [ ] C6 `feat(ui): Battery page` — live status group (per battery), health group
+- [x] C6 `feat(ui): Battery page` — live status group (per battery), health group
       (wear %, class, cycles, capacities), wear-over-time chart (cairo DrawingArea),
       per-panel degradation (UPower absent ≠ dead page), snapshot recording on load;
       VM tests; smoke extended.
@@ -38,10 +38,10 @@ be filtered by `type`; power_now=0 when not charging.
 - [x] Missing/-1 `cycle_count` handled; `charge_full > design` clamped, recorded as quirk
 - [x] Both energy_* and charge_* unit families supported (fixtures for each)
 - [x] Dual-battery support (fixture-tested)
-- [ ] Live status via UPower with change signals; page degrades per-panel when UPower
-      is unavailable (wear data still shows)
+- [x] Live status via UPower with change signals; page degrades per-panel when UPower
+      is unavailable (wear data still shows — validated on real E16 via container)
 - [x] History survives restarts (reopen test); daily snapshot idempotent
-- [ ] Wear-over-time chart renders (smoke: zero criticals)
+- [x] Wear-over-time chart renders (smoke: zero criticals)
 - [ ] ./check + smoke green both LTS; full lane green at close
 - [ ] Tag `v0.3.0`; GitHub pre-release published (public alpha); CHANGELOG; ROADMAP
 
