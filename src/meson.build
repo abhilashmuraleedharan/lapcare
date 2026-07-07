@@ -27,12 +27,14 @@ py.install_sources(
     'lapcare/providers/os_info.py',
     'lapcare/providers/pci_usb.py',
     'lapcare/providers/thinkpad_acpi.py',
+    'lapcare/providers/upower.py',
   ],
   subdir: 'lapcare/providers',
 )
 py.install_sources(
   [
     'lapcare/platform/__init__.py',
+    'lapcare/platform/dbus.py',
     'lapcare/platform/files.py',
     'lapcare/platform/log.py',
     'lapcare/platform/scheduler.py',

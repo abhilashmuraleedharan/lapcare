@@ -34,6 +34,8 @@ known-first-party = ["lapcare"]
 # (standard PyGObject pattern), which trips E402.
 "src/lapcare/ui/**" = ["E402"]
 "src/lapcare/app.py" = ["E402"]
+"src/lapcare/platform/dbus.py" = ["E402"]
+"src/lapcare/providers/upower.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"
