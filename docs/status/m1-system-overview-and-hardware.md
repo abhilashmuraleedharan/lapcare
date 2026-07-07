@@ -32,7 +32,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       (headless; capture-time redaction of serials/UUIDs/MACs by default,
       --include-identifiers local-only); fixture schema + review checklist in
       docs/testing.md; first fixtures captured from the E16 Gen 2.
-- [ ] C9 `feat(ui): Dashboard page` — view-model consuming identity/os/thinkpad ports
+- [x] C9 `feat(ui): Dashboard page` — view-model consuming identity/os/thinkpad ports
       via the scheduler; four-state; non-ThinkPad Adw.Banner; wired in app.py.
 - [ ] C10 `feat(ui): Hardware page` — identity, CPU/memory, PCI/USB expander lists;
       smoke test navigates all pages.
@@ -42,8 +42,8 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
 
 ## Acceptance criteria (from ROADMAP)
 
-- [ ] Dashboard shows model, BIOS version, kernel, uptime on the E16 Gen 2 — values
-      verified against direct sysfs/proc reads
+- [x] Dashboard shows model, BIOS version, kernel, uptime on the E16 Gen 2 — values
+      verified against direct sysfs/proc reads (xvfb run: model=ThinkPad E16 Gen 2)
 - [ ] Hardware page shows DMI identity, CPU/memory summary, PCI/USB inventory
 - [ ] Non-ThinkPad shows the graceful banner (validated via non-ThinkPad fixture and a
       container without Lenovo DMI)

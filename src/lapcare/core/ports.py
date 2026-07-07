@@ -15,7 +15,8 @@ Conventions every port follows:
 
 from __future__ import annotations
 
-from typing import Protocol
+from collections.abc import Callable, Coroutine
+from typing import Any, Protocol, TypeVar
 
 from lapcare.core.models import (
     Availability,
@@ -26,6 +27,28 @@ from lapcare.core.models import (
     ThinkpadInfo,
     UsbDevice,
 )
+
+T = TypeVar("T")
+
+
+class Scheduler(Protocol):
+    """Async execution port (implemented by platform.scheduler per ADR-0007).
+
+    View-models submit a coroutine and receive exactly one callback on the
+    GTK main thread. Defined here (not in platform) because it is an
+    interface the UI depends on — the dependency rule points inward.
+    """
+
+    def start(self) -> None: ...
+
+    def stop(self) -> None: ...
+
+    def submit(
+        self,
+        coro: Coroutine[Any, Any, T],
+        on_success: Callable[[T], None],
+        on_error: Callable[[BaseException], None],
+    ) -> None: ...
 
 
 class SystemIdentityProvider(Protocol):

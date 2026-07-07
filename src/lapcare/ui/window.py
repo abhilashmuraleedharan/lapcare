@@ -33,14 +33,17 @@ class MainWindow(Adw.ApplicationWindow):
     content_page = Gtk.Template.Child()
     page_container = Gtk.Template.Child()
 
-    def __init__(self, **kwargs):
+    def __init__(self, pages=None, **kwargs):
+        """``pages``: list of (page_id, title, widget) wired by the
+        composition root. Falls back to the self-contained reference page."""
         super().__init__(**kwargs)
 
-        # M0: the reference page is self-contained (no ports), so the window
-        # may construct it. Real pages arrive wired from app.py.
         self._pages: dict[str, tuple[str, object]] = {}
         self._current_page_id: str | None = None
-        self._register_page("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel()))
+        if pages is None:
+            pages = [("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel()))]
+        for page_id, title, widget in pages:
+            self._register_page(page_id, title, widget)
 
         self.sidebar_list.connect("row-selected", self._on_row_selected)
         self.sidebar_list.select_row(self.sidebar_list.get_row_at_index(0))

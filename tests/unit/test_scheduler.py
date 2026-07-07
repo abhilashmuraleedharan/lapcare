@@ -13,10 +13,10 @@ from typing import Any
 import pytest
 from gi.repository import GLib
 
+from lapcare.core.ports import Scheduler
 from lapcare.platform import scheduler as sched_mod
 from lapcare.platform.scheduler import (
     GLibEventLoopScheduler,
-    Scheduler,
     ThreadLoopScheduler,
     create_scheduler,
     has_native_integration,

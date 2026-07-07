@@ -40,14 +40,25 @@ def _load_resources() -> None:
     log.debug("resources registered from %s", path)
 
 
-def _build_application():  # -> Adw.Application (typed loosely: gi is untyped)
+def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is untyped)
     import gi
 
     gi.require_version("Gtk", "4.0")
     gi.require_version("Adw", "1")
+    from gettext import gettext as _
+
     from gi.repository import Adw, Gio, GLib
 
     _load_resources()
+    # Providers and pages are imported and WIRED here and only here — the
+    # composition root is the one module that sees concrete classes.
+    from lapcare.providers.dmi import DmiSysfs
+    from lapcare.providers.os_info import OsInfoProc
+    from lapcare.providers.thinkpad_acpi import ThinkpadAcpiSysfs
+    from lapcare.ui.pages.dashboard.view import DashboardPage
+    from lapcare.ui.pages.dashboard.view_model import DashboardViewModel
+    from lapcare.ui.pages.placeholder.view import PlaceholderPage
+    from lapcare.ui.pages.placeholder.view_model import PlaceholderViewModel
     from lapcare.ui.window import MainWindow
 
     class LapcareApplication(Adw.Application):
@@ -60,7 +71,18 @@ def _build_application():  # -> Adw.Application (typed loosely: gi is untyped)
         def do_activate(self) -> None:
             window = self.props.active_window
             if window is None:
-                window = MainWindow(application=self)
+                dmi = DmiSysfs()
+                os_info = OsInfoProc()
+                thinkpad = ThinkpadAcpiSysfs(identity=dmi)
+
+                dashboard_vm = DashboardViewModel(
+                    scheduler, identity=dmi, os_info=os_info, thinkpad=thinkpad
+                )
+                pages = [
+                    ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),
+                    ("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel())),
+                ]
+                window = MainWindow(application=self, pages=pages)
             window.present()
             log.info("window presented")
 
@@ -112,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
     scheduler = create_scheduler()
     scheduler.start()
     try:
-        app = _build_application()
+        app = _build_application(scheduler)
         return int(app.run([sys.argv[0]]))
     finally:
         scheduler.stop()
