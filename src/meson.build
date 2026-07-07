@@ -20,6 +20,7 @@ py.install_sources(
 py.install_sources(
   [
     'lapcare/providers/__init__.py',
+    'lapcare/providers/dmi.py',
     'lapcare/providers/os_info.py',
   ],
   subdir: 'lapcare/providers',
