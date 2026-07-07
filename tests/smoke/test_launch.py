@@ -30,7 +30,9 @@ pytestmark = pytest.mark.skipif(
 
 
 def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
-    assert GRESOURCE.exists(), "gresource not built — run: meson setup build && meson compile -C build"
+    assert GRESOURCE.exists(), (
+        "gresource not built — run: meson setup build && meson compile -C build"
+    )
 
     env = os.environ | {
         "LAPCARE_RESOURCE": str(GRESOURCE),
