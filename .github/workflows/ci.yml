@@ -31,8 +31,13 @@ jobs:
       - name: check (ruff, mypy, import-linter, pytest)
         run: ./check
 
-      - name: meson data tests
+      - name: meson build and data tests
         run: |
           meson setup build
           meson compile -C build
           meson test -C build --print-errorlogs
+
+      - name: smoke test (xvfb)
+        run: |
+          xvfb-run -a dbus-run-session env LAPCARE_SMOKE_TEST=1 GTK_A11Y=none \
+            python3 -m pytest tests/smoke -v
