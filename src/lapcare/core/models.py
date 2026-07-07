@@ -68,6 +68,61 @@ class UsbDevice:
     name: str | None = None  # human-readable "vendor product" text
 
 
+class CapacityUnit(Enum):
+    """Which sysfs unit family a battery reports (drivers vary — the E16
+    Gen 2 reports energy_*; some ThinkPads/vendors report charge_*)."""
+
+    MICRO_WATT_HOURS = "µWh"  # energy_full / energy_full_design
+    MICRO_AMP_HOURS = "µAh"  # charge_full / charge_full_design
+
+
+class BatteryState(Enum):
+    UNKNOWN = "unknown"
+    CHARGING = "charging"
+    DISCHARGING = "discharging"
+    NOT_CHARGING = "not-charging"  # threshold-managed ThinkPads report this on AC
+    FULL = "full"
+    EMPTY = "empty"
+
+
+@dataclass(frozen=True)
+class BatteryWear:
+    """Static/wear data for one battery (battery_sysfs provider)."""
+
+    name: str  # e.g. "BAT0"
+    capacity_full: int | None = None  # last full capacity, in capacity_unit
+    capacity_design: int | None = None  # design capacity, in capacity_unit
+    capacity_unit: CapacityUnit | None = None
+    cycle_count: int | None = None  # None when absent OR driver reports <= 0
+    model_name: str | None = None
+    manufacturer: str | None = None
+    technology: str | None = None
+
+
+@dataclass(frozen=True)
+class BatteryStatus:
+    """Live status for one battery (upower provider)."""
+
+    name: str
+    state: BatteryState = BatteryState.UNKNOWN
+    percentage: float | None = None
+    time_to_empty_s: int | None = None  # None when unknown (UPower reports 0)
+    time_to_full_s: int | None = None
+    energy_rate_w: float | None = None
+
+
+@dataclass(frozen=True)
+class WearSnapshot:
+    """One battery's wear on one day — the unit of history (HistoryStore)."""
+
+    day: str  # ISO date "YYYY-MM-DD"
+    battery_name: str
+    wear_percent: float | None = None
+    cycle_count: int | None = None
+    capacity_full: int | None = None
+    capacity_design: int | None = None
+
+
 @dataclass(frozen=True)
 class ThinkpadInfo:
     """ThinkPad detection result (thinkpad_acpi provider, detection only in M1)."""

@@ -12,9 +12,9 @@ be filtered by `type`; power_now=0 when not charging.
 
 ## Commit plan
 
-- [ ] C1 `docs: open milestone M2` — status file + real E16 battery fixture + synthetic
+- [x] C1 `docs: open milestone M2` — status file + real E16 battery fixture + synthetic
       fixtures (charge_* units, full>design, cycle_count=-1, dual battery, USB entries).
-- [ ] C2 `feat(core): battery models, wear analysis, health classification, ports` —
+- [x] C2 `feat(core): battery models, wear analysis, health classification, ports` —
       BatteryWear/BatteryStatus/WearSnapshot models, wear math (clamped), HealthClass
       thresholds (documented), BatteryWearProvider/BatteryStatusProvider/HistoryStore
       ports; pathological unit tests.
