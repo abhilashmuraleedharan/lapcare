@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Build/install is Meson's job (meson.build); this file configures the Python
+# QA tooling that ./check and CI's fast lane run. Dev tool versions live in
+# requirements-dev.txt.
+
+[project]
+name = "lapcare"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "UP",  # pyupgrade
+  "B",   # bugbear
+  "C4",  # comprehensions
+  "SIM", # simplify
+  "RUF", # ruff-specific
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["lapcare"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["lapcare"]
+
+[[tool.mypy.overrides]]
+module = "gi.*"
+ignore_missing_imports = true
+
+# UI layer is checked leniently: PyGObject stubs are imperfect (ADR-0003).
+# core/ and providers/ stay fully strict.
+[[tool.mypy.overrides]]
+module = "lapcare.ui.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+disallow_subclassing_any = false
+disallow_any_generics = false
+warn_return_any = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+# The dependency rule from ARCHITECTURE.md, mechanically enforced.
+# Run: lint-imports (part of ./check; violations fail CI).
+[tool.importlinter]
+root_packages = ["lapcare"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "core is pure: no gi, no other layers"
+type = "forbidden"
+source_modules = ["lapcare.core"]
+forbidden_modules = ["gi", "lapcare.providers", "lapcare.platform", "lapcare.ui"]
+
+[[tool.importlinter.contracts]]
+name = "ui depends on core only"
+type = "forbidden"
+source_modules = ["lapcare.ui"]
+forbidden_modules = ["lapcare.providers", "lapcare.platform"]
+
+[[tool.importlinter.contracts]]
+name = "platform never imports providers or ui"
+type = "forbidden"
+source_modules = ["lapcare.platform"]
+forbidden_modules = ["lapcare.providers", "lapcare.ui"]
+
+[[tool.importlinter.contracts]]
+name = "providers never import ui"
+type = "forbidden"
+source_modules = ["lapcare.providers"]
+forbidden_modules = ["lapcare.ui"]

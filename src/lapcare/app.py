@@ -6,6 +6,7 @@ exits. The Adw.Application shell arrives in M0 Commit 10; provider wiring
 begins in M1. This module is the only place concrete implementations are
 constructed and wired together (see ARCHITECTURE.md).
 """
+
 from __future__ import annotations
 
 import argparse

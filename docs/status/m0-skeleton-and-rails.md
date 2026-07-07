@@ -13,7 +13,7 @@ tag `v0.1.0`.
 - [x] C4 `docs: agent guide, contributor guide, roadmap, milestone tracker` (this commit)
 - [x] C5 `chore: GitHub templates and automation config`
 - [x] C6 `build: Meson skeleton and Python package layout`
-- [ ] C7 `chore: lint, type, import-contract, and test tooling`
+- [x] C7 `chore: lint, type, import-contract, and test tooling`
 - [ ] C8 `ci: fast-lane workflow`
 - [ ] C9 `spike: per-LTS stack validation; ADR-0007`
 - [ ] C10 `feat: application shell with logging`
@@ -28,7 +28,7 @@ tag `v0.1.0`.
 - [ ] `./run` opens a window on Ubuntu 24.04 LTS and 26.04 LTS
 - [ ] `./check` (ruff + mypy + import-linter + pytest) passes on both LTS releases
 - [ ] Async mechanism per LTS validated and recorded in ADR-0007
-- [ ] Import-linter demonstrably fails on a deliberate layering violation
+- [x] Import-linter demonstrably fails on a deliberate layering violation
 - [ ] CI fast lane green and < 5 min; required on `main` via branch protection
 - [ ] CI full lane: both-LTS matrix, meson build, .deb build + install-launch check
 - [ ] xvfb smoke test: app launches, navigates, zero GTK criticals
