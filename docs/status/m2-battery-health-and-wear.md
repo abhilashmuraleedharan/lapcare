@@ -1,6 +1,6 @@
 # M2 — Battery Health & Wear Analysis: Status
 
-**State:** in progress. **Branch:** `feature/m2` (single milestone PR, rebase-merged).
+**State:** COMPLETE (v0.3.0 — PUBLIC ALPHA). **Branch:** `feature/m2` (single milestone PR, rebase-merged).
 **Objective (ROADMAP):** Battery page — live status via UPower, wear analysis via sysfs,
 health classification, daily snapshot history + wear-over-time chart, dual-battery
 support. **Close = tag `v0.3.0` and the PUBLIC ALPHA release.**
@@ -29,8 +29,7 @@ be filtered by `type`; power_now=0 when not charging.
       per-panel degradation (UPower absent ≠ dead page), snapshot recording on load;
       VM tests; smoke extended.
 - [x] C7 `feat: capture tool learns battery files` + docs (module docs quirk entries).
-- [ ] C8 `docs: close milestone M2; release v0.3.0 (PUBLIC ALPHA)` — version bumps,
-      CHANGELOG, ROADMAP flip, merge, tag, GitHub pre-release with .deb artifacts.
+- [x] C8 `docs: close milestone M2; release v0.3.0 (PUBLIC ALPHA)`.
 
 ## Acceptance criteria (from ROADMAP)
 
@@ -42,13 +41,24 @@ be filtered by `type`; power_now=0 when not charging.
       is unavailable (wear data still shows — validated on real E16 via container)
 - [x] History survives restarts (reopen test); daily snapshot idempotent
 - [x] Wear-over-time chart renders (smoke: zero criticals)
-- [ ] ./check + smoke green both LTS; full lane green at close
-- [ ] Tag `v0.3.0`; GitHub pre-release published (public alpha); CHANGELOG; ROADMAP
+- [x] ./check + smoke green both LTS; full lane green at close (verified on tag)
+- [x] Tag `v0.3.0`; GitHub pre-release published (public alpha); CHANGELOG; ROADMAP
 
 ## Known deferrals / notes
 
-_(filled as they arise)_
+- Live-status validation against a REAL UPower daemon deferred until the host runs 24.04
+  natively (dbusmock covers the protocol; containers have no system bus).
+- Chart is deliberately minimal (line + fill + endpoint labels); axes/tooltips on demand.
+- Second-ThinkPad validation still open (carried from M1).
 
-## Retrospective (filled at close)
+## Retrospective
 
-_TBD._
+- **Real hardware beat the plan again:** the E16 reports energy_* not the plan-assumed
+  charge_*; 'Not charging' is a first-class state; USB-C source entries need filtering.
+  All six quirks are fixture-backed in the registry now.
+- **dbusmock earned its place:** the upower provider is tested end to end incl. signal
+  delivery on a private system bus — no UPower daemon needed anywhere.
+- **Per-panel degradation is now the house pattern** (hardware inventory, battery live
+  status): pages fail only on their core data.
+- **For M3:** fwupd is the same D-Bus recipe as upower (dbusmock has a template);
+  the firmware UX acceptance criteria in ROADMAP are the hard part, not the plumbing.
