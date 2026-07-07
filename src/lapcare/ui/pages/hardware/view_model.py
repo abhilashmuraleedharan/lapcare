@@ -9,7 +9,9 @@ from typing import TYPE_CHECKING
 
 from gi.repository import GObject
 
+from lapcare.core.errors import LapcareError, ProviderUnavailable
 from lapcare.core.models import (
+    Availability,
     CpuMemSummary,
     PciDevice,
     SystemIdentity,
@@ -61,29 +63,67 @@ class HardwareViewModel(PageViewModel):
         self._identity = identity
         self._os_info = os_info
         self._inventory = inventory
-        # Read by the view on ready; plain lists, not GObject properties.
+        # Read by the view on ready; plain attributes, not GObject properties.
         self.pci_devices: list[PciDevice] = []
         self.usb_devices: list[UsbDevice] = []
+        # Per-inventory degradation notes ("" = inventory is fine). The page
+        # stays READY when an inventory fails — graceful degradation is
+        # per-panel here, whole-page only for identity (the page's core).
+        self.pci_note = ""
+        self.usb_note = ""
 
     def load(self) -> None:
         self.show_loading()
         self._scheduler.submit(self._gather(), self._apply, self.handle_error)
 
+    def _inventory_note(self, exc: LapcareError) -> str:
+        if isinstance(exc, ProviderUnavailable):
+            if exc.reason is Availability.TOOL_MISSING and exc.tool:
+                return _("Not available — install the '%s' package.") % exc.tool
+            return _("Not available on this system.")
+        return _("Could not be read.")
+
     async def _gather(
         self,
-    ) -> tuple[SystemIdentity, CpuMemSummary, list[PciDevice], list[UsbDevice]]:
-        return (
-            await self._identity.read_identity(),
-            await self._os_info.read_cpu_mem(),
-            await self._inventory.list_pci(),
-            await self._inventory.list_usb(),
-        )
+    ) -> tuple[
+        SystemIdentity,
+        CpuMemSummary,
+        tuple[list[PciDevice], str],
+        tuple[list[UsbDevice], str],
+    ]:
+        identity = await self._identity.read_identity()
+        cpu_mem = await self._os_info.read_cpu_mem()
+
+        pci: tuple[list[PciDevice], str]
+        try:
+            pci = (await self._inventory.list_pci(), "")
+        except LapcareError as exc:
+            # e.g. VMs without a PCI-visible chassis, or pciutils missing.
+            log.debug("pci inventory degraded: %s", exc)
+            pci = ([], self._inventory_note(exc))
+
+        usb: tuple[list[UsbDevice], str]
+        try:
+            usb = (await self._inventory.list_usb(), "")
+        except LapcareError as exc:
+            # Real case: CI/cloud VMs have no USB subsystem; lsusb fails.
+            log.debug("usb inventory degraded: %s", exc)
+            usb = ([], self._inventory_note(exc))
+
+        return identity, cpu_mem, pci, usb
 
     def _apply(
         self,
-        data: tuple[SystemIdentity, CpuMemSummary, list[PciDevice], list[UsbDevice]],
+        data: tuple[
+            SystemIdentity,
+            CpuMemSummary,
+            tuple[list[PciDevice], str],
+            tuple[list[UsbDevice], str],
+        ],
     ) -> None:
-        identity, cpu_mem, pci, usb = data
+        identity, cpu_mem, (pci, pci_note), (usb, usb_note) = data
+        self.pci_note = pci_note
+        self.usb_note = usb_note
 
         self.props.family = identity.product_family or PLACEHOLDER
         self.props.machine_type = identity.product_name or PLACEHOLDER
