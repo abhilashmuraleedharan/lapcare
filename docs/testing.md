@@ -22,13 +22,27 @@ outputs, fwupd device lists, `/proc/acpi/ibm` files — organized as
 `cycle_count`, `charge_full > design`, dual batteries, non-ThinkPad machines). Every hardware
 bug report should become a regression fixture.
 
-**Governance (in force before any community capture is accepted; established in M1):**
+**Fixture schema (in force since M1):**
 
-1. A documented fixture schema (layout, required metadata: model, kernel, tool versions).
-2. Capture-time redaction by default (`--capture-fixtures`); `--include-identifiers` is
-   local-only and unredacted captures are never merged.
-3. Maintainer review checklist: identifiers scrubbed; machine/kernel recorded; any new quirk
-   documented in the provider's module doc.
+- Layout: `tests/fixtures/<source>/<machine-slug>/…` where `<source>` is the provider module
+  name (`dmi`, `os_info`, `thinkpad_acpi`, `pci_usb`, …). Filesystem sources mirror paths
+  from `/` (e.g. `dmi/thinkpad-e16-gen2/sys/class/dmi/id/sys_vendor`); command sources store
+  one `<tool>.txt` per invocation.
+- Machine slugs are kebab-case marketing names (`thinkpad-e16-gen2`) or `synthetic-*` for
+  handcrafted pathological cases.
+- Every community capture ships with the tool-generated `README.md` (machine, capture date,
+  kernel, redaction status).
+- `lapcare --capture-fixtures [DIR]` produces this layout; redaction is on by default.
+
+**Review checklist for accepting a capture (maintainer, before merge):**
+
+1. No identifiers anywhere: no serials, UUIDs, asset tags, MAC addresses, or real hostnames
+   (grep the capture; the tool's README must NOT say "IDENTIFIERS INCLUDED").
+2. Capture README present with machine + kernel recorded.
+3. New quirks observed in the data are documented in the affected provider's module doc
+   (`docs/modules/providers.md`) in the same PR.
+4. At least one provider test asserts against the new fixture (a fixture no test reads is
+   corpus rot).
 
 ## Manual hardware matrix
 
