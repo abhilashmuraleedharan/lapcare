@@ -1,0 +1,6 @@
+lapcare (0.1.0) unstable; urgency=medium
+
+  * Milestone M0: project skeleton and development rails. Not a usable
+    release — window shell, reference page, build/CI infrastructure.
+
+ -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Mon, 07 Jul 2026 03:00:00 +0000

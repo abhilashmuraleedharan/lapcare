@@ -20,7 +20,7 @@ tag `v0.1.0`.
 - [x] C11 `feat: platform async scheduler per ADR-0007`
 - [x] C12 `feat: navigation shell and reference page (four-state pattern)`
 - [x] C13 `test: xvfb smoke test in CI`
-- [ ] C14 `build: Debian packaging skeleton and full CI lane`
+- [x] C14 `build: Debian packaging skeleton and full CI lane`
 - [ ] C15 `docs: close milestone M0; release v0.1.0`
 
 ## Acceptance criteria
