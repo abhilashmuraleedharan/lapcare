@@ -54,4 +54,7 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     assert proc.returncode == 0, f"app exited {proc.returncode}:\n{output}"
     assert "CRITICAL" not in output, f"GTK criticals in output:\n{output}"
     assert "window presented" in output, output
-    assert "smoke: cycled all states" in output, output
+    assert "smoke: visited all pages" in output, output
+    assert "smoke: cycled all states" in output, output  # reference page states
+    assert "dashboard ready" in output, output
+    assert "hardware ready" in output, output

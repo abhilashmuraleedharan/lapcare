@@ -1,20 +1,22 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Main application window: NavigationSplitView shell.
 
-Sidebar rows and their pages are registered in __init__; M1 replaces the
-reference page with real pages (Dashboard, Hardware, …), each constructed
-with its view-model by the composition root and handed in — the window never
-builds providers or view-models for real pages itself.
+Pages arrive wired from the composition root as (id, title, widget); the
+window never builds providers or view-models for real pages itself.
+
+LAPCARE_SMOKE=1 makes the window visit every sidebar page on a timer (used
+by the xvfb smoke test to render each page at least once).
 """
 
 import logging
+import os
 from gettext import gettext as _
 
 import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, GLib, Gtk
 
 from lapcare.ui.pages.placeholder.view import PlaceholderPage
 from lapcare.ui.pages.placeholder.view_model import PlaceholderViewModel
@@ -48,6 +50,19 @@ class MainWindow(Adw.ApplicationWindow):
         self.sidebar_list.connect("row-selected", self._on_row_selected)
         self.sidebar_list.select_row(self.sidebar_list.get_row_at_index(0))
         log.debug("main window constructed with %d page(s)", len(self._pages))
+
+        if os.environ.get("LAPCARE_SMOKE") == "1":
+            self._smoke_index = 0
+            GLib.timeout_add(300, self._smoke_visit_next)
+
+    def _smoke_visit_next(self) -> bool:
+        self._smoke_index += 1
+        row = self.sidebar_list.get_row_at_index(self._smoke_index)
+        if row is None:
+            log.info("smoke: visited all pages")
+            return False  # GLib.SOURCE_REMOVE
+        self.sidebar_list.select_row(row)
+        return True
 
     def _register_page(self, page_id: str, title: str, widget) -> None:
         row = Adw.ActionRow(title=title, activatable=True)

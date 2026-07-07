@@ -1,0 +1,145 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Hardware: identity, processor & memory, and device inventory.
+using Gtk 4.0;
+using Adw 1;
+
+template $LapcareHardwarePage: Adw.Bin {
+  Adw.ToolbarView {
+    content: Gtk.Stack stack {
+      transition-type: crossfade;
+
+      Gtk.StackPage {
+        name: "loading";
+
+        child: Gtk.Box {
+          orientation: vertical;
+          valign: center;
+          spacing: 12;
+
+          Gtk.Spinner {
+            spinning: true;
+            halign: center;
+            width-request: 32;
+            height-request: 32;
+          }
+
+          Gtk.Label {
+            label: _("Reading hardware information…");
+
+            styles [
+              "dim-label",
+            ]
+          }
+        };
+      }
+
+      Gtk.StackPage {
+        name: "ready";
+
+        child: Adw.PreferencesPage {
+          Adw.PreferencesGroup {
+            title: _("Identity");
+
+            Adw.ActionRow row_family {
+              title: _("Product Family");
+
+              styles [
+                "property",
+              ]
+            }
+
+            Adw.ActionRow row_machine_type {
+              title: _("Machine Type");
+
+              styles [
+                "property",
+              ]
+            }
+
+            Adw.ActionRow row_board {
+              title: _("Board");
+
+              styles [
+                "property",
+              ]
+            }
+
+            Adw.ActionRow row_bios_version {
+              title: _("BIOS / UEFI Version");
+
+              styles [
+                "property",
+              ]
+            }
+
+            Adw.ActionRow row_bios_date {
+              title: _("BIOS Date");
+
+              styles [
+                "property",
+              ]
+            }
+          }
+
+          Adw.PreferencesGroup {
+            title: _("Processor and Memory");
+
+            Adw.ActionRow row_cpu_model {
+              title: _("Processor");
+
+              styles [
+                "property",
+              ]
+            }
+
+            Adw.ActionRow row_cpu_count {
+              title: _("Logical CPUs");
+
+              styles [
+                "property",
+              ]
+            }
+
+            Adw.ActionRow row_memory {
+              title: _("Memory");
+
+              styles [
+                "property",
+              ]
+            }
+          }
+
+          Adw.PreferencesGroup {
+            title: _("Devices");
+
+            Adw.ExpanderRow pci_expander {
+              title: _("PCI Devices");
+            }
+
+            Adw.ExpanderRow usb_expander {
+              title: _("USB Devices");
+            }
+          }
+        };
+      }
+
+      Gtk.StackPage {
+        name: "unavailable";
+
+        child: Adw.StatusPage unavailable_status {
+          icon-name: "action-unavailable-symbolic";
+          title: _("Hardware Information Not Available");
+        };
+      }
+
+      Gtk.StackPage {
+        name: "error";
+
+        child: Adw.StatusPage error_status {
+          icon-name: "dialog-error-symbolic";
+          title: _("Could Not Read Hardware Information");
+        };
+      }
+    };
+  }
+}

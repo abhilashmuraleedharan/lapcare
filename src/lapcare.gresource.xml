@@ -4,6 +4,7 @@
   <gresource prefix="/io/github/abhilashmuraleedharan/lapcare">
     <file alias="ui/window.ui">lapcare/ui/window.ui</file>
     <file alias="ui/pages/dashboard/page.ui">lapcare/ui/pages/dashboard/page.ui</file>
+    <file alias="ui/pages/hardware/page.ui">lapcare/ui/pages/hardware/page.ui</file>
     <file alias="ui/pages/placeholder/page.ui">lapcare/ui/pages/placeholder/page.ui</file>
   </gresource>
 </gresources>

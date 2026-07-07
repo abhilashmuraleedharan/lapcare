@@ -54,9 +54,12 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     # composition root is the one module that sees concrete classes.
     from lapcare.providers.dmi import DmiSysfs
     from lapcare.providers.os_info import OsInfoProc
+    from lapcare.providers.pci_usb import PciUsbTools
     from lapcare.providers.thinkpad_acpi import ThinkpadAcpiSysfs
     from lapcare.ui.pages.dashboard.view import DashboardPage
     from lapcare.ui.pages.dashboard.view_model import DashboardViewModel
+    from lapcare.ui.pages.hardware.view import HardwarePage
+    from lapcare.ui.pages.hardware.view_model import HardwareViewModel
     from lapcare.ui.pages.placeholder.view import PlaceholderPage
     from lapcare.ui.pages.placeholder.view_model import PlaceholderViewModel
     from lapcare.ui.window import MainWindow
@@ -74,12 +77,17 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 dmi = DmiSysfs()
                 os_info = OsInfoProc()
                 thinkpad = ThinkpadAcpiSysfs(identity=dmi)
+                inventory = PciUsbTools()
 
                 dashboard_vm = DashboardViewModel(
                     scheduler, identity=dmi, os_info=os_info, thinkpad=thinkpad
                 )
+                hardware_vm = HardwareViewModel(
+                    scheduler, identity=dmi, os_info=os_info, inventory=inventory
+                )
                 pages = [
                     ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),
+                    ("hardware", _("Hardware"), HardwarePage(hardware_vm)),
                     ("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel())),
                 ]
                 window = MainWindow(application=self, pages=pages)
