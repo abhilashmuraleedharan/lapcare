@@ -36,6 +36,7 @@ py.install_sources(
     'lapcare/platform/__init__.py',
     'lapcare/platform/dbus.py',
     'lapcare/platform/files.py',
+    'lapcare/platform/history.py',
     'lapcare/platform/log.py',
     'lapcare/platform/scheduler.py',
     'lapcare/platform/subprocess.py',
