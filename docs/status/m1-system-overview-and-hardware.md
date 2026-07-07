@@ -12,12 +12,12 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
 
 ## Commit plan
 
-- [ ] C1 `docs: open milestone M1` (this commit)
+- [x] C1 `docs: open milestone M1`
 - [x] C2 `feat(core): errors, models, and ports for M1 providers` — core/errors.py
       (plan §12 hierarchy), core/models.py (SystemIdentity, OsInfo, CpuMemSummary,
       PciDevice, UsbDevice, ThinkpadInfo), Availability + provider Protocols in
       core/ports.py; unit tests.
-- [ ] C3 `feat(platform): audited subprocess runner and sysfs read helpers` —
+- [x] C3 `feat(platform): audited subprocess runner and sysfs read helpers` —
       platform/subprocess.py (argv whitelist, mandatory timeout, shell-free, async),
       platform/files.py (size-limited reads, None-on-missing); tests.
 - [ ] C4 `provider: os_info` — /etc/os-release + /proc (kernel, uptime, hostname,

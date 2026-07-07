@@ -61,6 +61,7 @@ warn_return_any = false
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-ra"
+asyncio_mode = "auto"
 
 # The dependency rule from ARCHITECTURE.md, mechanically enforced.
 # Run: lint-imports (part of ./check; violations fail CI).

@@ -21,8 +21,10 @@ py.install_sources(['lapcare/providers/__init__.py'], subdir: 'lapcare/providers
 py.install_sources(
   [
     'lapcare/platform/__init__.py',
+    'lapcare/platform/files.py',
     'lapcare/platform/log.py',
     'lapcare/platform/scheduler.py',
+    'lapcare/platform/subprocess.py',
   ],
   subdir: 'lapcare/platform',
 )
