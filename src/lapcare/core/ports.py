@@ -20,12 +20,15 @@ from typing import Any, Protocol, TypeVar
 
 from lapcare.core.models import (
     Availability,
+    BatteryStatus,
+    BatteryWear,
     CpuMemSummary,
     OsInfo,
     PciDevice,
     SystemIdentity,
     ThinkpadInfo,
     UsbDevice,
+    WearSnapshot,
 )
 
 T = TypeVar("T")
@@ -85,3 +88,40 @@ class DeviceInventoryProvider(Protocol):
     async def list_pci(self) -> list[PciDevice]: ...
 
     async def list_usb(self) -> list[UsbDevice]: ...
+
+
+class BatteryWearProvider(Protocol):
+    """Static/wear battery data (providers.battery_sysfs). Empty list = no
+    batteries (a desktop) — data, not unavailability."""
+
+    def availability(self) -> Availability: ...
+
+    async def list_batteries(self) -> list[BatteryWear]: ...
+
+
+class BatteryStatusProvider(Protocol):
+    """Live battery status (providers.upower)."""
+
+    def availability(self) -> Availability: ...
+
+    async def read_status(self) -> list[BatteryStatus]: ...
+
+    def subscribe(self, on_change: Callable[[], None]) -> None:
+        """Invoke ``on_change`` on the GTK main thread when status changes."""
+        ...
+
+
+class HistoryStore(Protocol):
+    """Wear history persistence (platform.history, SQLite).
+
+    Methods are synchronous; call them from provider-I/O context (inside a
+    coroutine submitted to the Scheduler), never directly on the GTK thread.
+    """
+
+    def record_wear(self, snapshot: WearSnapshot) -> None:
+        """Insert or replace the snapshot for (day, battery) — idempotent."""
+        ...
+
+    def wear_history(self, battery_name: str, limit: int = 365) -> list[WearSnapshot]:
+        """Snapshots for one battery, ascending by day, at most ``limit``."""
+        ...
