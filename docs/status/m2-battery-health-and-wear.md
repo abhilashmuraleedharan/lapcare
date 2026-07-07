@@ -18,7 +18,7 @@ be filtered by `type`; power_now=0 when not charging.
       BatteryWear/BatteryStatus/WearSnapshot models, wear math (clamped), HealthClass
       thresholds (documented), BatteryWearProvider/BatteryStatusProvider/HistoryStore
       ports; pathological unit tests.
-- [ ] C3 `provider: battery_sysfs` — /sys/class/power_supply walk, type filter,
+- [x] C3 `provider: battery_sysfs` — /sys/class/power_supply walk, type filter,
       energy_/charge_ unit handling, quirk tolerance; fixture tests.
 - [ ] C4 `feat(platform): D-Bus helpers + provider: upower` — platform/dbus.py,
       UPower live status + change signals; python-dbusmock tests.
@@ -35,9 +35,9 @@ be filtered by `type`; power_now=0 when not charging.
 ## Acceptance criteria (from ROADMAP)
 
 - [ ] Wear % matches manual sysfs math on the E16 Gen 2 (54.29/57.0 → 4.75%)
-- [ ] Missing/-1 `cycle_count` handled; `charge_full > design` clamped, recorded as quirk
-- [ ] Both energy_* and charge_* unit families supported (fixtures for each)
-- [ ] Dual-battery support (fixture-tested)
+- [x] Missing/-1 `cycle_count` handled; `charge_full > design` clamped, recorded as quirk
+- [x] Both energy_* and charge_* unit families supported (fixtures for each)
+- [x] Dual-battery support (fixture-tested)
 - [ ] Live status via UPower with change signals; page degrades per-panel when UPower
       is unavailable (wear data still shows)
 - [ ] History survives restarts (reopen test); daily snapshot idempotent
