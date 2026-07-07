@@ -31,6 +31,13 @@ def _make_source_root(root: Path) -> None:
     (tp / "uevent").write_text("DRIVER=thinkpad_acpi\n")
     (tp / "fan").write_text("level: auto\n")
 
+    bat = root / "sys/class/power_supply/BAT0"
+    bat.mkdir(parents=True)
+    (bat / "type").write_text("Battery\n")
+    (bat / "energy_full").write_text("54290000\n")
+    (bat / "cycle_count").write_text("92\n")
+    (bat / "serial_number").write_text("BATSECRET42\n")
+
 
 async def _fake_runner(tool: str, args: Sequence[str], *, timeout: float = 10.0) -> str:
     return f"fake {tool} output\n"
@@ -52,9 +59,15 @@ async def test_capture_redacts_by_default(tmp_path: Path) -> None:
     hostname = out / "os_info" / machine / "proc/sys/kernel/hostname"
     assert hostname.read_text().strip() == "redacted-host"
 
+    bat_out = out / "battery_sysfs" / machine / "sys/class/power_supply/BAT0"
+    assert (bat_out / "energy_full").read_text().strip() == "54290000"
+    assert (bat_out / "cycle_count").read_text().strip() == "92"
+    assert not (bat_out / "serial_number").exists()
+
     # Nothing anywhere in the capture contains the identifiers.
     all_text = "".join(p.read_text() for p in out.rglob("*") if p.is_file())
     assert "SECRET123" not in all_text
+    assert "BATSECRET42" not in all_text
     assert "my-private-hostname" not in all_text
 
     assert (out / "thinkpad_acpi" / machine / "sys/devices/platform/thinkpad_acpi/uevent").exists()
