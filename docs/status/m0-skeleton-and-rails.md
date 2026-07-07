@@ -16,7 +16,7 @@ tag `v0.1.0`.
 - [x] C7 `chore: lint, type, import-contract, and test tooling`
 - [x] C8 `ci: fast-lane workflow`
 - [x] C9 `spike: per-LTS stack validation; ADR-0007`
-- [ ] C10 `feat: application shell with logging`
+- [x] C10 `feat: application shell with logging`
 - [ ] C11 `feat: platform async scheduler per ADR-0007`
 - [ ] C12 `feat: navigation shell and reference page (four-state pattern)`
 - [ ] C13 `test: xvfb smoke test in CI`
@@ -25,7 +25,7 @@ tag `v0.1.0`.
 
 ## Acceptance criteria
 
-- [ ] `./run` opens a window on Ubuntu 24.04 LTS and 26.04 LTS
+- [x] `./run` opens a window on Ubuntu 24.04 LTS and 26.04 LTS (validated via xvfb in containers)
 - [ ] `./check` (ruff + mypy + import-linter + pytest) passes on both LTS releases
 - [x] Async mechanism per LTS validated and recorded in ADR-0007
 - [x] Import-linter demonstrably fails on a deliberate layering violation

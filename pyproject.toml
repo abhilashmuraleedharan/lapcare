@@ -29,6 +29,12 @@ select = [
 [tool.ruff.lint.isort]
 known-first-party = ["lapcare"]
 
+[tool.ruff.lint.per-file-ignores]
+# gi.require_version() must run before `from gi.repository import ...`
+# (standard PyGObject pattern), which trips E402.
+"src/lapcare/ui/**" = ["E402"]
+"src/lapcare/app.py" = ["E402"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
@@ -39,10 +45,10 @@ packages = ["lapcare"]
 module = "gi.*"
 ignore_missing_imports = true
 
-# UI layer is checked leniently: PyGObject stubs are imperfect (ADR-0003).
-# core/ and providers/ stay fully strict.
+# UI layer and composition root are checked leniently: they subclass gi
+# types, which mypy sees as Any (ADR-0003). core/ and providers/ stay strict.
 [[tool.mypy.overrides]]
-module = "lapcare.ui.*"
+module = ["lapcare.ui.*", "lapcare.app"]
 disallow_untyped_defs = false
 disallow_untyped_calls = false
 disallow_subclassing_any = false

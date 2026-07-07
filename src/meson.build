@@ -16,8 +16,20 @@ py.install_sources(
   subdir: 'lapcare/core',
 )
 py.install_sources(['lapcare/providers/__init__.py'], subdir: 'lapcare/providers')
-py.install_sources(['lapcare/platform/__init__.py'], subdir: 'lapcare/platform')
-py.install_sources(['lapcare/ui/__init__.py'], subdir: 'lapcare/ui')
+py.install_sources(
+  [
+    'lapcare/platform/__init__.py',
+    'lapcare/platform/log.py',
+  ],
+  subdir: 'lapcare/platform',
+)
+py.install_sources(
+  [
+    'lapcare/ui/__init__.py',
+    'lapcare/ui/window.py',
+  ],
+  subdir: 'lapcare/ui',
+)
 
 launcher_conf = configuration_data()
 launcher_conf.set('PYTHON', py.full_path())
