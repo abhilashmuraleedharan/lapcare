@@ -11,7 +11,7 @@ tag `v0.1.0`.
 - [x] C2 `docs: project constitution and community policies`
 - [x] C3 `docs: architecture document and decision records`
 - [x] C4 `docs: agent guide, contributor guide, roadmap, milestone tracker` (this commit)
-- [ ] C5 `chore: GitHub templates and automation config`
+- [x] C5 `chore: GitHub templates and automation config`
 - [ ] C6 `build: Meson skeleton and Python package layout`
 - [ ] C7 `chore: lint, type, import-contract, and test tooling`
 - [ ] C8 `ci: fast-lane workflow`
@@ -36,7 +36,7 @@ tag `v0.1.0`.
 - [x] Contracts docs exist: constitution, ARCHITECTURE, STYLEGUIDE, CONTRIBUTING, AGENTS,
       ROADMAP, DECISIONS + ADRs 0001–0005, 0008 (0006/0007 reserved)
 - [x] SECURITY.md, CODE_OF_CONDUCT.md published
-- [ ] GitHub templates (PR, issues) live
+- [x] GitHub templates (PR, issues) live
 - [ ] Tag `v0.1.0` created; CHANGELOG updated; ROADMAP status flipped
 
 ## Known deferrals / notes
