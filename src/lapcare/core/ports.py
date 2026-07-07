@@ -1,10 +1,64 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Ports: the Protocol interfaces implemented by providers and platform.
 
-This module is the architectural boundary described in ARCHITECTURE.md — the
-UI and core depend on these interfaces; adapters implement them; only the
-composition root (app.py) sees concrete classes.
+The architectural boundary described in ARCHITECTURE.md: UI and core depend on
+these; adapters implement them; only the composition root (app.py) sees
+concrete classes. Stdlib imports only.
 
-Grows with milestone M1 (first providers: dmi, os_info, pci_usb,
-thinkpad_acpi) and M2 (HistoryStore). Stdlib imports only.
+Conventions every port follows:
+- ``availability()`` is cheap and synchronous (existence checks, no I/O beyond
+  a stat) and reports what the provider can currently deliver.
+- Read methods are ``async`` and raise only the ``core.errors`` hierarchy.
+- Returned models come from ``core.models``; fields are Optional-by-default —
+  a provider returns what it could read, never invents values.
 """
+
+from __future__ import annotations
+
+from typing import Protocol
+
+from lapcare.core.models import (
+    Availability,
+    CpuMemSummary,
+    OsInfo,
+    PciDevice,
+    SystemIdentity,
+    ThinkpadInfo,
+    UsbDevice,
+)
+
+
+class SystemIdentityProvider(Protocol):
+    """DMI identity (implemented by providers.dmi)."""
+
+    def availability(self) -> Availability: ...
+
+    async def read_identity(self) -> SystemIdentity: ...
+
+
+class OsInfoProvider(Protocol):
+    """OS release / kernel / uptime and CPU-memory summary (providers.os_info)."""
+
+    def availability(self) -> Availability: ...
+
+    async def read_os(self) -> OsInfo: ...
+
+    async def read_cpu_mem(self) -> CpuMemSummary: ...
+
+
+class ThinkpadProvider(Protocol):
+    """ThinkPad detection (providers.thinkpad_acpi; detection only in M1)."""
+
+    def availability(self) -> Availability: ...
+
+    async def detect(self) -> ThinkpadInfo: ...
+
+
+class DeviceInventoryProvider(Protocol):
+    """PCI/USB inventory (providers.pci_usb)."""
+
+    def availability(self) -> Availability: ...
+
+    async def list_pci(self) -> list[PciDevice]: ...
+
+    async def list_usb(self) -> list[UsbDevice]: ...

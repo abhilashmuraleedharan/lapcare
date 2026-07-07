@@ -13,7 +13,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
 ## Commit plan
 
 - [ ] C1 `docs: open milestone M1` (this commit)
-- [ ] C2 `feat(core): errors, models, and ports for M1 providers` — core/errors.py
+- [x] C2 `feat(core): errors, models, and ports for M1 providers` — core/errors.py
       (plan §12 hierarchy), core/models.py (SystemIdentity, OsInfo, CpuMemSummary,
       PciDevice, UsbDevice, ThinkpadInfo), Availability + provider Protocols in
       core/ports.py; unit tests.

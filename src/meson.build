@@ -11,6 +11,8 @@ py.install_sources(
 py.install_sources(
   [
     'lapcare/core/__init__.py',
+    'lapcare/core/errors.py',
+    'lapcare/core/models.py',
     'lapcare/core/ports.py',
   ],
   subdir: 'lapcare/core',
