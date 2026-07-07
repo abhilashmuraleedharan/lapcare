@@ -1,3 +1,12 @@
+lapcare (0.3.0) unstable; urgency=medium
+
+  * Milestone M2 (public alpha): Battery page — live status via UPower,
+    wear analysis and health classification from sysfs, daily wear
+    history with chart, dual-battery support; capture tool learns
+    battery data.
+
+ -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Tue, 07 Jul 2026 18:00:00 +0000
+
 lapcare (0.2.0) unstable; urgency=medium
 
   * Milestone M1: Dashboard and Hardware pages with live system data

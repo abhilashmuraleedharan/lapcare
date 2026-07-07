@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-07-07 (Milestone M2: Battery Health & Wear — PUBLIC ALPHA)
+
+**The first announced release.** Pre-1.0 alpha: read-only, zero privileged
+operations. Supported targets: Ubuntu 24.04 LTS and 26.04 LTS. Reference
+hardware: ThinkPad E16 Gen 2.
+
+### Added
+
+- **Battery page**: live charge status (state, percentage, time estimates)
+  via UPower with change-signal updates; health classification (transparent
+  thresholds: Good < 15% wear, Fair < 30%, Poor beyond) with wear percentage;
+  cycle count; full-vs-design capacity; daily wear history with a
+  wear-over-time chart; dual-battery support. Live status degrades to a note
+  where UPower is unavailable — wear data still shows.
+- Providers: `battery_sysfs` (both energy_*/charge_* unit families,
+  ThinkPad quirks normalized) and `upower` (D-Bus, dbusmock-tested end to
+  end including signals).
+- Wear history persistence: SQLite under the XDG data dir; one idempotent
+  snapshot per battery per day; survives restarts.
+- `lapcare --capture-fixtures` now captures battery data (serial numbers
+  excluded, as always).
+
 ## [0.2.0] — 2026-07-07 (Milestone M1: System Overview & Hardware Information)
 
 Pre-alpha. Supported targets: Ubuntu 24.04 LTS and 26.04 LTS. Reference
