@@ -1,5 +1,7 @@
 # Lapcare
 
+[![CI](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml/badge.svg)](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml)
+
 > **Status: pre-alpha.** Nothing to install yet — the project is under active initial
 > development. The first announced release will be the public alpha (v0.3.0); see the
 > roadmap below.
