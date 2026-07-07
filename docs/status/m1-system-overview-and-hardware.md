@@ -20,7 +20,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
 - [x] C3 `feat(platform): audited subprocess runner and sysfs read helpers` —
       platform/subprocess.py (argv whitelist, mandatory timeout, shell-free, async),
       platform/files.py (size-limited reads, None-on-missing); tests.
-- [ ] C4 `provider: os_info` — /etc/os-release + /proc (kernel, uptime, hostname,
+- [x] C4 `provider: os_info` — /etc/os-release + /proc (kernel, uptime, hostname,
       CPU model/counts, memory total); root-path injectable; fixture tests.
 - [ ] C5 `provider: dmi` — /sys/class/dmi/id identity fields (all Optional;
       product_serial expected PERMISSION_DENIED unprivileged); fixture tests.
