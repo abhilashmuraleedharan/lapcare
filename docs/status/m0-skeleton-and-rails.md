@@ -14,7 +14,7 @@ tag `v0.1.0`.
 - [x] C5 `chore: GitHub templates and automation config`
 - [x] C6 `build: Meson skeleton and Python package layout`
 - [x] C7 `chore: lint, type, import-contract, and test tooling`
-- [ ] C8 `ci: fast-lane workflow`
+- [x] C8 `ci: fast-lane workflow`
 - [ ] C9 `spike: per-LTS stack validation; ADR-0007`
 - [ ] C10 `feat: application shell with logging`
 - [ ] C11 `feat: platform async scheduler per ADR-0007`

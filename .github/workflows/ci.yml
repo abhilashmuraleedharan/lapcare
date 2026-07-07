@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Fast lane: every PR, newest supported LTS, mirrors ./check (+ meson data
+# tests, which are seconds). The full lane (both-LTS matrix + .deb build)
+# arrives in M0 Commit 14 and runs on main/nightly/tags.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fast-lane:
+    name: fast-lane
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: sh tools/install-deps.sh
+
+      - name: Install QA tooling
+        run: python3 -m pip install --break-system-packages --no-cache-dir -r requirements-dev.txt
+
+      - name: check (ruff, mypy, import-linter, pytest)
+        run: ./check
+
+      - name: meson data tests
+        run: |
+          meson setup build
+          meson compile -C build
+          meson test -C build --print-errorlogs
