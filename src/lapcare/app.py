@@ -64,5 +64,14 @@ def main(argv: list[str] | None = None) -> int:
     platform_log.configure(verbose=args.verbose)
     log.info("starting version=%s", __version__)
 
-    app = _build_application()
-    return int(app.run([sys.argv[0]]))
+    # Scheduler must exist before the GLib main loop starts (ADR-0007); it is
+    # handed to view-models when pages arrive (M1).
+    from lapcare.platform.scheduler import create_scheduler
+
+    scheduler = create_scheduler()
+    scheduler.start()
+    try:
+        app = _build_application()
+        return int(app.run([sys.argv[0]]))
+    finally:
+        scheduler.stop()
