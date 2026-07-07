@@ -34,7 +34,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       docs/testing.md; first fixtures captured from the E16 Gen 2.
 - [x] C9 `feat(ui): Dashboard page` — view-model consuming identity/os/thinkpad ports
       via the scheduler; four-state; non-ThinkPad Adw.Banner; wired in app.py.
-- [ ] C10 `feat(ui): Hardware page` — identity, CPU/memory, PCI/USB expander lists;
+- [x] C10 `feat(ui): Hardware page` — identity, CPU/memory, PCI/USB expander lists;
       smoke test navigates all pages.
 - [ ] C11 `docs: guides extracted from real code` — adding-a-provider, adding-a-page,
       capturing-fixtures; docs/modules/ for shipped modules.
@@ -44,10 +44,9 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
 
 - [x] Dashboard shows model, BIOS version, kernel, uptime on the E16 Gen 2 — values
       verified against direct sysfs/proc reads (xvfb run: model=ThinkPad E16 Gen 2)
-- [ ] Hardware page shows DMI identity, CPU/memory summary, PCI/USB inventory
-- [ ] Non-ThinkPad shows the graceful banner (validated via non-ThinkPad fixture and a
-      container without Lenovo DMI)
-- [ ] Every panel handles `unavailable` (validated by fixture-driven tests)
+- [x] Hardware page shows DMI identity, CPU/memory summary, PCI/USB inventory
+- [x] Non-ThinkPad shows the graceful banner (validated via QEMU fixture in VM tests)
+- [x] Every panel handles `unavailable` (validated by fixture-driven tests)
 - [ ] Correct data on 2+ real ThinkPads incl. E16 Gen 2 (second machine: community or
       deferred with note at close)
 - [x] Fixture governance in place: schema documented, capture-time redaction default,
