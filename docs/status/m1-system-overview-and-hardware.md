@@ -36,7 +36,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       via the scheduler; four-state; non-ThinkPad Adw.Banner; wired in app.py.
 - [x] C10 `feat(ui): Hardware page` — identity, CPU/memory, PCI/USB expander lists;
       smoke test navigates all pages.
-- [ ] C11 `docs: guides extracted from real code` — adding-a-provider, adding-a-page,
+- [x] C11 `docs: guides extracted from real code` — adding-a-provider, adding-a-page,
       capturing-fixtures; docs/modules/ for shipped modules.
 - [ ] C12 `docs: close milestone M1; release v0.2.0`.
 
@@ -51,8 +51,8 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       deferred with note at close)
 - [x] Fixture governance in place: schema documented, capture-time redaction default,
       review checklist — before any community capture is merged
-- [ ] `docs/guides/` recipes extracted from the real providers/pages built here
-- [ ] `docs/modules/` docs for shipped providers (exact paths/invocations + quirks)
+- [x] `docs/guides/` recipes extracted from the real providers/pages built here
+- [x] `docs/modules/` docs for shipped providers (exact paths/invocations + quirks)
 - [ ] ./check + smoke green on both LTS; fast lane green; full lane green at close
 - [ ] Tag `v0.2.0`; CHANGELOG; ROADMAP flipped
 
