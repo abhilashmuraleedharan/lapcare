@@ -45,7 +45,21 @@ py.install_sources(
   ],
   subdir: 'lapcare/ui',
 )
-py.install_sources(['lapcare/ui/pages/__init__.py'], subdir: 'lapcare/ui/pages')
+py.install_sources(
+  [
+    'lapcare/ui/pages/__init__.py',
+    'lapcare/ui/pages/base_view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages',
+)
+py.install_sources(
+  [
+    'lapcare/ui/pages/dashboard/__init__.py',
+    'lapcare/ui/pages/dashboard/view.py',
+    'lapcare/ui/pages/dashboard/view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages/dashboard',
+)
 py.install_sources(
   [
     'lapcare/ui/pages/placeholder/__init__.py',
@@ -61,6 +75,7 @@ blueprint_compiler = find_program('blueprint-compiler')
 blueprints = custom_target('blueprints',
   input: files(
     'lapcare/ui/window.blp',
+    'lapcare/ui/pages/dashboard/page.blp',
     'lapcare/ui/pages/placeholder/page.blp',
   ),
   output: '.',

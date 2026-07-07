@@ -1,0 +1,135 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Dashboard: system overview with the four-state pattern and the
+// non-ThinkPad banner.
+using Gtk 4.0;
+using Adw 1;
+
+template $LapcareDashboardPage: Adw.Bin {
+  Adw.ToolbarView {
+    content: Gtk.Box {
+      orientation: vertical;
+
+      Adw.Banner banner {
+        title: _("This doesn’t appear to be a ThinkPad — some features will be unavailable.");
+      }
+
+      Gtk.Stack stack {
+        vexpand: true;
+        transition-type: crossfade;
+
+        Gtk.StackPage {
+          name: "loading";
+
+          child: Gtk.Box {
+            orientation: vertical;
+            valign: center;
+            spacing: 12;
+
+            Gtk.Spinner {
+              spinning: true;
+              halign: center;
+              width-request: 32;
+              height-request: 32;
+            }
+
+            Gtk.Label {
+              label: _("Reading system information…");
+
+              styles [
+                "dim-label",
+              ]
+            }
+          };
+        }
+
+        Gtk.StackPage {
+          name: "ready";
+
+          child: Adw.PreferencesPage {
+            Adw.PreferencesGroup {
+              title: _("System");
+
+              Adw.ActionRow row_model {
+                title: _("Model");
+
+                styles [
+                  "property",
+                ]
+              }
+
+              Adw.ActionRow row_machine_type {
+                title: _("Machine Type");
+
+                styles [
+                  "property",
+                ]
+              }
+
+              Adw.ActionRow row_vendor {
+                title: _("Vendor");
+
+                styles [
+                  "property",
+                ]
+              }
+
+              Adw.ActionRow row_bios {
+                title: _("BIOS / UEFI");
+
+                styles [
+                  "property",
+                ]
+              }
+            }
+
+            Adw.PreferencesGroup {
+              title: _("Software");
+
+              Adw.ActionRow row_distro {
+                title: _("Operating System");
+
+                styles [
+                  "property",
+                ]
+              }
+
+              Adw.ActionRow row_kernel {
+                title: _("Kernel");
+
+                styles [
+                  "property",
+                ]
+              }
+
+              Adw.ActionRow row_uptime {
+                title: _("Uptime");
+
+                styles [
+                  "property",
+                ]
+              }
+            }
+          };
+        }
+
+        Gtk.StackPage {
+          name: "unavailable";
+
+          child: Adw.StatusPage unavailable_status {
+            icon-name: "action-unavailable-symbolic";
+            title: _("System Information Not Available");
+          };
+        }
+
+        Gtk.StackPage {
+          name: "error";
+
+          child: Adw.StatusPage error_status {
+            icon-name: "dialog-error-symbolic";
+            title: _("Could Not Read System Information");
+          };
+        }
+      }
+    };
+  }
+}

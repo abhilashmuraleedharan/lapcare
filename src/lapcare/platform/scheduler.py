@@ -24,30 +24,15 @@ import asyncio
 import logging
 import threading
 from collections.abc import Callable, Coroutine
-from typing import Any, Protocol, TypeVar
+from typing import Any, TypeVar
 
 from gi.repository import GLib
+
+from lapcare.core.ports import Scheduler
 
 log = logging.getLogger(__name__)
 
 T = TypeVar("T")
-
-
-class Scheduler(Protocol):
-    """What the composition root hands to view-models."""
-
-    def start(self) -> None: ...
-
-    def stop(self) -> None: ...
-
-    def submit(
-        self,
-        coro: Coroutine[Any, Any, T],
-        on_success: Callable[[T], None],
-        on_error: Callable[[BaseException], None],
-    ) -> None:
-        """Run ``coro``; deliver exactly one callback on the GTK main thread."""
-        ...
 
 
 class GLibEventLoopScheduler:
