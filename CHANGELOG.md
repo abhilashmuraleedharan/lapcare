@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-07-07 (Milestone M1: System Overview & Hardware Information)
+
+Pre-alpha. Supported targets: Ubuntu 24.04 LTS and 26.04 LTS. Reference
+hardware: ThinkPad E16 Gen 2.
+
+### Added
+
+- **Dashboard page**: model, machine type, vendor, BIOS version/date, OS,
+  kernel, uptime — with a banner on non-ThinkPad machines.
+- **Hardware page**: DMI identity, processor and memory summary, PCI and USB
+  device inventory (expandable lists).
+- Providers: `dmi` (sysfs identity), `os_info` (os-release + /proc),
+  `thinkpad_acpi` (ThinkPad detection), `pci_usb` (lspci/lsusb through the
+  audited runner). All fixture-tested, including real ThinkPad E16 Gen 2
+  captures; every panel degrades gracefully (four-state pattern).
+- `lapcare --capture-fixtures`: headless hardware capture with identifiers
+  redacted at capture time (`--include-identifiers` is local-only); fixture
+  schema + maintainer review checklist in docs/testing.md.
+- Core domain layer: models, error hierarchy, ports (incl. the Scheduler
+  port); platform: audited subprocess runner (whitelisted argv, timeouts,
+  bounded output) and bounded sysfs readers.
+- Guides extracted from the real code: adding-a-provider, adding-a-page,
+  capturing-fixtures; provider quirk registry in docs/modules/providers.md.
+
 ## [0.1.0] — 2026-07-07 (Milestone M0: Skeleton & Rails)
 
 Not a usable release: development skeleton and rails. Supported targets:

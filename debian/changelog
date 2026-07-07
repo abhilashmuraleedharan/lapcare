@@ -1,3 +1,11 @@
+lapcare (0.2.0) unstable; urgency=medium
+
+  * Milestone M1: Dashboard and Hardware pages with live system data
+    (DMI identity, OS info, ThinkPad detection, PCI/USB inventory);
+    fixture capture tool with capture-time redaction.
+
+ -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Tue, 07 Jul 2026 12:00:00 +0000
+
 lapcare (0.1.0) unstable; urgency=medium
 
   * Milestone M0: project skeleton and development rails. Not a usable
