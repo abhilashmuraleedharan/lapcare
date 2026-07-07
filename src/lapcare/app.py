@@ -79,10 +79,31 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--version", action="version", version=f"lapcare {__version__}")
     parser.add_argument("--verbose", action="store_true", help="enable debug logging")
+    parser.add_argument(
+        "--capture-fixtures",
+        nargs="?",
+        const="lapcare-fixtures",
+        metavar="DIR",
+        help="capture this machine's data as test fixtures (headless) and exit",
+    )
+    parser.add_argument(
+        "--include-identifiers",
+        action="store_true",
+        help="with --capture-fixtures: keep serials/UUIDs/hostname (LOCAL DEBUGGING ONLY)",
+    )
     args = parser.parse_args(argv)
 
     platform_log.configure(verbose=args.verbose)
     log.info("starting version=%s", __version__)
+
+    if args.capture_fixtures:
+        from pathlib import Path
+
+        from lapcare.capture import run_capture
+
+        return run_capture(
+            Path(args.capture_fixtures), include_identifiers=args.include_identifiers
+        )
 
     # Scheduler must exist before the GLib main loop starts (ADR-0007); it is
     # handed to view-models when pages arrive (M1).

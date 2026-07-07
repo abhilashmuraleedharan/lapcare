@@ -5,6 +5,7 @@ py.install_sources(
     'lapcare/__init__.py',
     'lapcare/__main__.py',
     'lapcare/app.py',
+    'lapcare/capture.py',
   ],
   subdir: 'lapcare',
 )

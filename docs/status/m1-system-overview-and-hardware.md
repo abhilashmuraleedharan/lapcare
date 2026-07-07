@@ -28,7 +28,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       cross-check → ThinkpadInfo; fixture tests incl. non-ThinkPad fixture.
 - [x] C7 `provider: pci_usb` — inventory via `lspci -mm` / `lsusb` through the audited
       runner (runner-injectable); fixture tests; pciutils/usbutils added to deps.
-- [ ] C8 `feat: fixture capture tool + first real fixtures` — `lapcare --capture-fixtures`
+- [x] C8 `feat: fixture capture tool + first real fixtures` — `lapcare --capture-fixtures`
       (headless; capture-time redaction of serials/UUIDs/MACs by default,
       --include-identifiers local-only); fixture schema + review checklist in
       docs/testing.md; first fixtures captured from the E16 Gen 2.
@@ -50,7 +50,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
 - [ ] Every panel handles `unavailable` (validated by fixture-driven tests)
 - [ ] Correct data on 2+ real ThinkPads incl. E16 Gen 2 (second machine: community or
       deferred with note at close)
-- [ ] Fixture governance in place: schema documented, capture-time redaction default,
+- [x] Fixture governance in place: schema documented, capture-time redaction default,
       review checklist — before any community capture is merged
 - [ ] `docs/guides/` recipes extracted from the real providers/pages built here
 - [ ] `docs/modules/` docs for shipped providers (exact paths/invocations + quirks)
