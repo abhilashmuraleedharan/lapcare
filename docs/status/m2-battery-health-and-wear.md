@@ -20,7 +20,7 @@ be filtered by `type`; power_now=0 when not charging.
       ports; pathological unit tests.
 - [x] C3 `provider: battery_sysfs` — /sys/class/power_supply walk, type filter,
       energy_/charge_ unit handling, quirk tolerance; fixture tests.
-- [ ] C4 `feat(platform): D-Bus helpers + provider: upower` — platform/dbus.py,
+- [x] C4 `feat(platform): D-Bus helpers + provider: upower` — platform/dbus.py,
       UPower live status + change signals; python-dbusmock tests.
 - [ ] C5 `feat(platform): SQLite HistoryStore` — daily wear snapshots under XDG data dir,
       idempotent per (date, battery), survives restart; tests.
