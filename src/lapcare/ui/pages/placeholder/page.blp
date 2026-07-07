@@ -1,0 +1,99 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Reference page: the four-state pattern (loading / ready / unavailable /
+// error) every Lapcare page follows. The bottom action bar is a debug
+// state-switcher, part of this page's job as living documentation.
+using Gtk 4.0;
+using Adw 1;
+
+template $LapcarePlaceholderPage: Adw.Bin {
+  Adw.ToolbarView {
+    content: Gtk.Stack stack {
+      transition-type: crossfade;
+
+      Gtk.StackPage {
+        name: "loading";
+
+        child: Gtk.Box {
+          orientation: vertical;
+          valign: center;
+          spacing: 12;
+
+          Gtk.Spinner {
+            spinning: true;
+            halign: center;
+            width-request: 32;
+            height-request: 32;
+          }
+
+          Gtk.Label {
+            label: _("Loading…");
+
+            styles [
+              "dim-label",
+            ]
+          }
+        };
+      }
+
+      Gtk.StackPage {
+        name: "ready";
+
+        child: Adw.StatusPage {
+          icon-name: "emblem-ok-symbolic";
+          title: _("Reference Page");
+          description: _("This page demonstrates the four-state pattern every Lapcare page follows: loading, ready, unavailable, and error. Copy it when adding a page.");
+        };
+      }
+
+      Gtk.StackPage {
+        name: "unavailable";
+
+        child: Adw.StatusPage unavailable_status {
+          icon-name: "action-unavailable-symbolic";
+          title: _("Not Available");
+        };
+      }
+
+      Gtk.StackPage {
+        name: "error";
+
+        child: Adw.StatusPage error_status {
+          icon-name: "dialog-error-symbolic";
+          title: _("Something Went Wrong");
+        };
+      }
+    };
+
+    [bottom]
+    Gtk.ActionBar {
+      [center]
+      Gtk.Box {
+        spacing: 0;
+
+        styles [
+          "linked",
+        ]
+
+        Gtk.Button {
+          label: "Loading";
+          clicked => $_on_demo_loading();
+        }
+
+        Gtk.Button {
+          label: "Ready";
+          clicked => $_on_demo_ready();
+        }
+
+        Gtk.Button {
+          label: "Unavailable";
+          clicked => $_on_demo_unavailable();
+        }
+
+        Gtk.Button {
+          label: "Error";
+          clicked => $_on_demo_error();
+        }
+      }
+    }
+  }
+}

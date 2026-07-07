@@ -21,6 +21,25 @@ from lapcare.platform import log as platform_log
 log = logging.getLogger(__name__)
 
 
+def _load_resources() -> None:
+    """Register the gresource bundle (compiled Blueprint UI definitions).
+
+    Must run before any ui module is imported: Gtk.Template decorators read
+    resources at class-definition time. The path comes from LAPCARE_RESOURCE,
+    set by the installed launcher (pkgdatadir) or by ./run (build dir).
+    """
+    from gi.repository import Gio
+
+    path = os.environ.get("LAPCARE_RESOURCE")
+    if not path or not os.path.exists(path):
+        raise RuntimeError(
+            "UI resources not found (LAPCARE_RESOURCE unset or missing). "
+            "Run via ./run or the installed 'lapcare' command."
+        )
+    Gio.resources_register(Gio.Resource.load(path))
+    log.debug("resources registered from %s", path)
+
+
 def _build_application():  # -> Adw.Application (typed loosely: gi is untyped)
     import gi
 
@@ -28,6 +47,7 @@ def _build_application():  # -> Adw.Application (typed loosely: gi is untyped)
     gi.require_version("Adw", "1")
     from gi.repository import Adw, Gio, GLib
 
+    _load_resources()
     from lapcare.ui.window import MainWindow
 
     class LapcareApplication(Adw.Application):

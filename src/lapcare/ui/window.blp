@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Main window: NavigationSplitView shell. Sidebar rows are added by
+// window.py as pages arrive milestone by milestone.
+using Gtk 4.0;
+using Adw 1;
+
+template $LapcareMainWindow: Adw.ApplicationWindow {
+  title: _("Lapcare");
+  default-width: 980;
+  default-height: 640;
+
+  content: Adw.NavigationSplitView split_view {
+    min-sidebar-width: 200;
+    max-sidebar-width: 260;
+
+    sidebar: Adw.NavigationPage {
+      title: _("Lapcare");
+
+      child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {}
+
+        content: Gtk.ScrolledWindow {
+          hscrollbar-policy: never;
+
+          child: Gtk.ListBox sidebar_list {
+            selection-mode: browse;
+
+            styles [
+              "navigation-sidebar",
+            ]
+          };
+        };
+      };
+    };
+
+    content: Adw.NavigationPage content_page {
+      title: _("Reference");
+
+      child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {}
+
+        content: Adw.Bin page_container {};
+      };
+    };
+  };
+}

@@ -31,15 +31,38 @@ py.install_sources(
   ],
   subdir: 'lapcare/ui',
 )
-
-launcher_conf = configuration_data()
-launcher_conf.set('PYTHON', py.full_path())
-launcher_conf.set('pythondir', py.get_install_dir())
-
-configure_file(
-  input: 'lapcare.in',
-  output: 'lapcare',
-  configuration: launcher_conf,
-  install_dir: get_option('bindir'),
-  install_mode: 'rwxr-xr-x',
+py.install_sources(['lapcare/ui/pages/__init__.py'], subdir: 'lapcare/ui/pages')
+py.install_sources(
+  [
+    'lapcare/ui/pages/placeholder/__init__.py',
+    'lapcare/ui/pages/placeholder/view.py',
+    'lapcare/ui/pages/placeholder/view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages/placeholder',
 )
+
+# Blueprint -> GtkBuilder XML -> gresource bundle. Loaded at runtime via the
+# LAPCARE_RESOURCE env var (set by the installed launcher and by ./run).
+blueprint_compiler = find_program('blueprint-compiler')
+blueprints = custom_target('blueprints',
+  input: files(
+    'lapcare/ui/window.blp',
+    'lapcare/ui/pages/placeholder/page.blp',
+  ),
+  output: '.',
+  command: [blueprint_compiler, 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
+)
+
+pkgdatadir = get_option('prefix') / get_option('datadir') / 'lapcare'
+
+gnome.compile_resources('lapcare',
+  'lapcare.gresource.xml',
+  dependencies: blueprints,
+  gresource_bundle: true,
+  install: true,
+  install_dir: pkgdatadir,
+)
+
+# NOTE: the launcher (src/lapcare.in) is generated from the ROOT meson.build,
+# not here — its output file 'lapcare' would collide with the 'lapcare/'
+# directory tree that blueprint batch-compile mirrors into this build dir.

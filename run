@@ -3,6 +3,9 @@
 # Launch lapcare from the source tree.
 #   ./run [app args]              native (requires Ubuntu 24.04+ toolchain)
 #   ./run --lts 24.04 [app args]  inside a validation container (any host with docker)
+#
+# Builds the gresource bundle (compiled Blueprints) via Meson first, then runs
+# the app from src/ with LAPCARE_RESOURCE pointing at the build dir.
 set -eu
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
@@ -14,4 +17,23 @@ if [ "${1:-}" = "--lts" ]; then
 fi
 
 cd "${HERE}"
-PYTHONPATH="${HERE}/src" exec python3 -m lapcare "$@"
+
+if ! command -v meson >/dev/null; then
+    echo "run: meson not found — this host lacks the toolchain; use ./run --lts 24.04" >&2
+    exit 1
+fi
+
+# Meson prints errors to stdout, so capture and replay on failure rather
+# than silently discarding them.
+build_step() {
+    if ! "$@" >/tmp/lapcare-build.log 2>&1; then
+        cat /tmp/lapcare-build.log >&2
+        exit 1
+    fi
+}
+[ -f build/build.ninja ] || build_step meson setup build
+build_step meson compile -C build
+
+LAPCARE_RESOURCE="${HERE}/build/src/lapcare.gresource" \
+PYTHONPATH="${HERE}/src" \
+exec python3 -m lapcare "$@"

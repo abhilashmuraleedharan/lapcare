@@ -17,6 +17,19 @@ endif
 subdir('src')
 subdir('data')
 
+launcher_conf = configuration_data()
+launcher_conf.set('PYTHON', py.full_path())
+launcher_conf.set('pythondir', py.get_install_dir())
+launcher_conf.set('pkgdatadir', pkgdatadir)
+
+configure_file(
+  input: 'src/lapcare.in',
+  output: 'lapcare',
+  configuration: launcher_conf,
+  install_dir: get_option('bindir'),
+  install_mode: 'rwxr-xr-x',
+)
+
 gnome.post_install(
   glib_compile_schemas: true,
   update_desktop_database: true,

@@ -21,6 +21,7 @@ apt-get install -y --no-install-recommends \
     desktop-file-utils \
     appstream \
     libglib2.0-bin \
+    libglib2.0-dev-bin \
     gettext \
     dbus \
     xvfb \

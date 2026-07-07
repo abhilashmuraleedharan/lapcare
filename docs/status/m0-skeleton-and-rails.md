@@ -18,7 +18,7 @@ tag `v0.1.0`.
 - [x] C9 `spike: per-LTS stack validation; ADR-0007`
 - [x] C10 `feat: application shell with logging`
 - [x] C11 `feat: platform async scheduler per ADR-0007`
-- [ ] C12 `feat: navigation shell and reference page (four-state pattern)`
+- [x] C12 `feat: navigation shell and reference page (four-state pattern)`
 - [ ] C13 `test: xvfb smoke test in CI`
 - [ ] C14 `build: Debian packaging skeleton and full CI lane`
 - [ ] C15 `docs: close milestone M0; release v0.1.0`
@@ -26,13 +26,13 @@ tag `v0.1.0`.
 ## Acceptance criteria
 
 - [x] `./run` opens a window on Ubuntu 24.04 LTS and 26.04 LTS (validated via xvfb in containers)
-- [ ] `./check` (ruff + mypy + import-linter + pytest) passes on both LTS releases
+- [x] `./check` (ruff + mypy + import-linter + pytest) passes on both LTS releases
 - [x] Async mechanism per LTS validated and recorded in ADR-0007
 - [x] Import-linter demonstrably fails on a deliberate layering violation
 - [x] CI fast lane green and < 5 min; required on `main` via branch protection (51 s first run)
 - [ ] CI full lane: both-LTS matrix, meson build, .deb build + install-launch check
 - [ ] xvfb smoke test: app launches, navigates, zero GTK criticals
-- [ ] Reference page demonstrates all four page states; view-model tested without display
+- [x] Reference page demonstrates all four page states; view-model tested without display
 - [x] Contracts docs exist: constitution, ARCHITECTURE, STYLEGUIDE, CONTRIBUTING, AGENTS,
       ROADMAP, DECISIONS + ADRs 0001–0005, 0008 (0006/0007 reserved)
 - [x] SECURITY.md, CODE_OF_CONDUCT.md published
