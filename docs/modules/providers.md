@@ -47,3 +47,4 @@ Runs `lspci -mm` and `lsusb` (packages: pciutils, usbutils) via the audited runn
 | New silicon shows `Device XXXX` names until pci.ids catches up — that's data, not an error | E16 Gen 2 capture (Meteor Lake) |
 | lsusb includes root hubs (`1d6b:*`) — real devices; UI may filter later | E16 capture: 7 devices incl. hubs |
 | lspci `-r`/`-p` revision tokens are skipped in parsing | parser |
+| Cloud/CI VMs can have NO USB subsystem — lsusb exits nonzero ("unable to initialize usb spec"). Consumers must degrade per-panel, not per-page | GitHub Actions runner, 2026-07 |

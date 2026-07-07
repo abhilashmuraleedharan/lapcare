@@ -33,7 +33,9 @@ def test_ready_with_e16_fixtures() -> None:
     assert len(vm.usb_devices) == 7
 
 
-def test_inventory_tool_missing_is_unavailable() -> None:
+def test_inventory_failure_degrades_per_panel_not_whole_page() -> None:
+    # Real case: CI/cloud VMs have no USB subsystem and lsusb fails — the
+    # page must stay READY with identity data, noting the degraded panels.
     from lapcare.platform.subprocess import ToolNotFound
     from tests.providers.test_pci_usb import raising_runner
 
@@ -44,8 +46,11 @@ def test_inventory_tool_missing_is_unavailable() -> None:
         inventory=PciUsbTools(runner=raising_runner(ToolNotFound("lspci"))),
     )
     vm.load()
-    assert vm.props.state == "unavailable"
-    assert "pciutils" in vm.props.unavailable_remedy
+    assert vm.props.state == "ready"
+    assert vm.props.family == "ThinkPad E16 Gen 2"
+    assert vm.pci_devices == []
+    assert "pciutils" in vm.pci_note
+    assert vm.usb_note  # degraded too (same runner)
 
 
 def test_format_memory() -> None:

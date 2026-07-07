@@ -73,7 +73,12 @@ class HardwarePage(Adw.Bin):
                 expander.remove(row)
         self._device_rows.clear()
 
-        self.pci_expander.set_subtitle(_("%d devices") % len(self._vm.pci_devices))
+        if self._vm.pci_note:
+            self.pci_expander.set_subtitle(self._vm.pci_note)
+            self.pci_expander.set_enable_expansion(False)
+        else:
+            self.pci_expander.set_subtitle(_("%d devices") % len(self._vm.pci_devices))
+            self.pci_expander.set_enable_expansion(True)
         for pci in self._vm.pci_devices:
             row = Adw.ActionRow(
                 title=f"{pci.vendor or '?'} — {pci.device or '?'}",
@@ -82,7 +87,12 @@ class HardwarePage(Adw.Bin):
             self.pci_expander.add_row(row)
             self._device_rows.append(row)
 
-        self.usb_expander.set_subtitle(_("%d devices") % len(self._vm.usb_devices))
+        if self._vm.usb_note:
+            self.usb_expander.set_subtitle(self._vm.usb_note)
+            self.usb_expander.set_enable_expansion(False)
+        else:
+            self.usb_expander.set_subtitle(_("%d devices") % len(self._vm.usb_devices))
+            self.usb_expander.set_enable_expansion(True)
         for usb in self._vm.usb_devices:
             row = Adw.ActionRow(
                 title=usb.name or _("Unknown device"),
