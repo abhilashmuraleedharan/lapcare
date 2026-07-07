@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Run everything CI's fast lane runs. Must be green before any commit.
+#   ./check                 native (requires Ubuntu 24.04+ toolchain + requirements-dev.txt)
+#   ./check --lts 24.04     inside a validation container (any host with docker)
+set -eu
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+
+if [ "${1:-}" = "--lts" ]; then
+    LTS="${2:?usage: ./check --lts <24.04|26.04>}"
+    shift 2
+    exec "${HERE}/tools/dev-container.sh" "${LTS}" ./check "$@"
+fi
+
+cd "${HERE}"
+
+step() {
+    printf '\n== %s ==\n' "$1"
+    shift
+    "$@"
+}
+
+step "ruff format" python3 -m ruff format --check src tests
+step "ruff lint" python3 -m ruff check src tests
+step "mypy" python3 -m mypy
+step "import-linter" env PYTHONPATH=src lint-imports
+step "pytest" python3 -m pytest -q
+
+printf '\nAll checks passed.\n'

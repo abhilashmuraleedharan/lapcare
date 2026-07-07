@@ -7,3 +7,8 @@ FROM ubuntu:${UBUNTU_VERSION}
 
 COPY tools/install-deps.sh /tmp/install-deps.sh
 RUN sh /tmp/install-deps.sh && rm -rf /var/lib/apt/lists/*
+
+# QA tooling (containers are disposable: system-wide pip install is fine here)
+COPY requirements-dev.txt /tmp/requirements-dev.txt
+RUN python3 -m pip install --break-system-packages --no-cache-dir \
+    -r /tmp/requirements-dev.txt
