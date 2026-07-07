@@ -22,6 +22,7 @@ py.install_sources(
     'lapcare/providers/__init__.py',
     'lapcare/providers/dmi.py',
     'lapcare/providers/os_info.py',
+    'lapcare/providers/pci_usb.py',
     'lapcare/providers/thinkpad_acpi.py',
   ],
   subdir: 'lapcare/providers',

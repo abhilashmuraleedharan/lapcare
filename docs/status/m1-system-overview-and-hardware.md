@@ -26,7 +26,7 @@ family+version "ThinkPad E16 Gen 2" / BIOS R2JET48W(1.25) / `thinkpad_acpi` load
       product_serial expected PERMISSION_DENIED unprivileged); fixture tests.
 - [x] C6 `provider: thinkpad_acpi (detection only)` — driver presence + DMI vendor
       cross-check → ThinkpadInfo; fixture tests incl. non-ThinkPad fixture.
-- [ ] C7 `provider: pci_usb` — inventory via `lspci -mm` / `lsusb` through the audited
+- [x] C7 `provider: pci_usb` — inventory via `lspci -mm` / `lsusb` through the audited
       runner (runner-injectable); fixture tests; pciutils/usbutils added to deps.
 - [ ] C8 `feat: fixture capture tool + first real fixtures` — `lapcare --capture-fixtures`
       (headless; capture-time redaction of serials/UUIDs/MACs by default,

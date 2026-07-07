@@ -25,5 +25,7 @@ apt-get install -y --no-install-recommends \
     gettext \
     dbus \
     xvfb \
+    pciutils \
+    usbutils \
     xauth \
     python3-dbusmock
