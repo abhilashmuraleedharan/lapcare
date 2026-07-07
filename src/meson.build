@@ -59,6 +59,21 @@ py.install_sources(
 )
 py.install_sources(
   [
+    'lapcare/ui/pages/battery/__init__.py',
+    'lapcare/ui/pages/battery/view.py',
+    'lapcare/ui/pages/battery/view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages/battery',
+)
+py.install_sources(
+  [
+    'lapcare/ui/widgets/__init__.py',
+    'lapcare/ui/widgets/wear_chart.py',
+  ],
+  subdir: 'lapcare/ui/widgets',
+)
+py.install_sources(
+  [
     'lapcare/ui/pages/dashboard/__init__.py',
     'lapcare/ui/pages/dashboard/view.py',
     'lapcare/ui/pages/dashboard/view_model.py',
@@ -88,6 +103,7 @@ blueprint_compiler = find_program('blueprint-compiler')
 blueprints = custom_target('blueprints',
   input: files(
     'lapcare/ui/window.blp',
+    'lapcare/ui/pages/battery/page.blp',
     'lapcare/ui/pages/dashboard/page.blp',
     'lapcare/ui/pages/hardware/page.blp',
     'lapcare/ui/pages/placeholder/page.blp',

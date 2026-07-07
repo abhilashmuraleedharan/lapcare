@@ -52,10 +52,15 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     _load_resources()
     # Providers and pages are imported and WIRED here and only here — the
     # composition root is the one module that sees concrete classes.
+    from lapcare.platform.history import SqliteHistoryStore
+    from lapcare.providers.battery_sysfs import BatterySysfs
     from lapcare.providers.dmi import DmiSysfs
     from lapcare.providers.os_info import OsInfoProc
     from lapcare.providers.pci_usb import PciUsbTools
     from lapcare.providers.thinkpad_acpi import ThinkpadAcpiSysfs
+    from lapcare.providers.upower import UPowerDbus
+    from lapcare.ui.pages.battery.view import BatteryPage
+    from lapcare.ui.pages.battery.view_model import BatteryViewModel
     from lapcare.ui.pages.dashboard.view import DashboardPage
     from lapcare.ui.pages.dashboard.view_model import DashboardViewModel
     from lapcare.ui.pages.hardware.view import HardwarePage
@@ -85,8 +90,15 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 hardware_vm = HardwareViewModel(
                     scheduler, identity=dmi, os_info=os_info, inventory=inventory
                 )
+                battery_vm = BatteryViewModel(
+                    scheduler,
+                    wear=BatterySysfs(),
+                    status=UPowerDbus(),
+                    history=SqliteHistoryStore(),
+                )
                 pages = [
                     ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),
+                    ("battery", _("Battery"), BatteryPage(battery_vm)),
                     ("hardware", _("Hardware"), HardwarePage(hardware_vm)),
                     ("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel())),
                 ]

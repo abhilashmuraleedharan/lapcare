@@ -57,4 +57,5 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     assert "smoke: visited all pages" in output, output
     assert "smoke: cycled all states" in output, output  # reference page states
     assert "dashboard ready" in output, output
+    assert "battery ready" in output, output
     assert "hardware ready" in output, output
