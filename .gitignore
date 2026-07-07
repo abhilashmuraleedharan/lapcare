@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Meson / build
+build/
+builddir/
+dist/
+
+# Debian packaging build artifacts
+debian/.debhelper/
+debian/lapcare/
+debian/files
+debian/*.log
+debian/*.substvars
+*.deb
+*.buildinfo
+*.changes
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+
+# Local scratch (never committed)
+.scratch/
