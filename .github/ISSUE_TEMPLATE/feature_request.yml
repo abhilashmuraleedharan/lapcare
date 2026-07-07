@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest a capability for Lapcare
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: check `ROADMAP.md` (it may already be planned) and `DECISIONS.md`
+        (it may already be decided against — e.g. Flatpak-first is ADR-0005).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the user need, not the implementation.
+    validations:
+      required: true
+  - type: input
+    id: tool
+    attributes:
+      label: Which existing Linux tool or interface exposes this?
+      description: |
+        Lapcare wraps existing tools rather than reimplementing them (constitution
+        principle #1). If you know the underlying tool/sysfs path/D-Bus service, name it.
+      placeholder: e.g. /sys/class/power_supply/BAT0/charge_control_end_threshold
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered

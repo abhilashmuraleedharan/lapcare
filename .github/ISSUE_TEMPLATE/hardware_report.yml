@@ -1,0 +1,40 @@
+name: Hardware report / fixture contribution
+description: Contribute captured data from your machine to the test fixture corpus
+labels: ["hardware", "fixtures"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fixture contributions are among the most valuable things you can give this project —
+        they are how Lapcare learns what real hardware actually does.
+
+        **Privacy rule:** only *redacted* captures are accepted. From M1 onward,
+        `lapcare --capture-fixtures` redacts serial numbers, UUIDs, and MAC addresses by
+        default — never use `--include-identifiers` output here. Unredacted attachments will
+        be deleted, not merged.
+  - type: input
+    id: model
+    attributes:
+      label: Machine model
+      placeholder: ThinkPad X1 Carbon Gen 9
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Distribution and kernel
+      placeholder: Ubuntu 24.04, 6.8.0-124-generic
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything unusual about this machine?
+      description: Dual battery, aftermarket parts, odd firmware, fields that look wrong…
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: The attached capture was produced with default redaction (no `--include-identifiers`)
+          required: true

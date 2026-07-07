@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in Lapcare misbehaves or crashes
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Hardware details matter enormously for this project — a bug we can tie to a
+        machine can usually become a regression test fixture.
+  - type: input
+    id: model
+    attributes:
+      label: Machine model
+      description: e.g. ThinkPad T480, X1 Carbon Gen 9 (from the Hardware page or `cat /sys/class/dmi/id/product_family`)
+      placeholder: ThinkPad T480
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Distribution and kernel
+      description: e.g. Ubuntu 24.04, kernel 6.8.0-124-generic (`uname -r`)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Lapcare version or commit
+      placeholder: v0.3.0 / git abc1234
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: |
+        Run `LAPCARE_DEBUG=1 lapcare` and paste the relevant journal/stderr excerpt.
+        DEBUG output may contain serial numbers — please scrub identifiers before pasting.
+      render: text
+  - type: checkboxes
+    id: fixture
+    attributes:
+      label: Fixture contribution
+      options:
+        - label: I'm willing to contribute a redacted hardware capture to reproduce this (we'll guide you)
