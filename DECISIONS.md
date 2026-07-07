@@ -13,5 +13,5 @@ a silent divergence.
 | [0004](docs/adr/0004-privilege-strategy-polkit.md) | Privilege strategy | Accepted | Three polkit tiers; fixed-verb pkexec helper with enumerate-and-match; no root daemon |
 | [0005](docs/adr/0005-packaging-deb-first-flatpak-deferred.md) | Packaging | Accepted | Native .deb/PPA first; Flatpak deferred until the D-Bus service exists |
 | 0006 | Privileged-helper threat model & validation spec | **Reserved** | Must be written and accepted before milestone M4 begins (blocking entry gate) |
-| 0007 | Async integration per Ubuntu LTS | **Reserved** | Written during the M0 stack-validation spike (Commit 9); records `gi.events` vs executor fallback per LTS |
+| [0007](docs/adr/0007-async-integration-per-lts.md) | Async integration per Ubuntu LTS | Accepted | Native `gi.events` on 26.04+; dedicated background asyncio loop thread + `GLib.idle_add` on 24.04; one scheduler interface |
 | [0008](docs/adr/0008-capability-model-deferred.md) | Capability model | Accepted | Deferred; `availability()` is the seed; ADR triggered by first write feature (M6) or second vendor (M10) |
