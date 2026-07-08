@@ -14,6 +14,7 @@ py.install_sources(
     'lapcare/core/__init__.py',
     'lapcare/core/battery_analysis.py',
     'lapcare/core/errors.py',
+    'lapcare/core/firmware_policy.py',
     'lapcare/core/models.py',
     'lapcare/core/ports.py',
   ],
@@ -24,6 +25,7 @@ py.install_sources(
     'lapcare/providers/__init__.py',
     'lapcare/providers/battery_sysfs.py',
     'lapcare/providers/dmi.py',
+    'lapcare/providers/fwupd.py',
     'lapcare/providers/os_info.py',
     'lapcare/providers/pci_usb.py',
     'lapcare/providers/thinkpad_acpi.py',
@@ -82,6 +84,14 @@ py.install_sources(
 )
 py.install_sources(
   [
+    'lapcare/ui/pages/firmware/__init__.py',
+    'lapcare/ui/pages/firmware/view.py',
+    'lapcare/ui/pages/firmware/view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages/firmware',
+)
+py.install_sources(
+  [
     'lapcare/ui/pages/hardware/__init__.py',
     'lapcare/ui/pages/hardware/view.py',
     'lapcare/ui/pages/hardware/view_model.py',
@@ -105,6 +115,7 @@ blueprints = custom_target('blueprints',
     'lapcare/ui/window.blp',
     'lapcare/ui/pages/battery/page.blp',
     'lapcare/ui/pages/dashboard/page.blp',
+    'lapcare/ui/pages/firmware/page.blp',
     'lapcare/ui/pages/hardware/page.blp',
     'lapcare/ui/pages/placeholder/page.blp',
   ),

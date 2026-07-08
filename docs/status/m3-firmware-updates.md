@@ -31,12 +31,17 @@ small local template built from `dbusmock`'s `SKELETON`.
       main thread, and a minutes-long flash there would freeze the UI. Test infrastructure:
       one session-wide private system bus (two `DBusTestCase` classes each starting/stopping
       their own bus leaves Gio's singleton connection dead — process abort).
-- [ ] C5 `feat(ui): Firmware page` — device list, per-device update availability, refresh
-      metadata action; four-state page pattern; per-device degradation (one device's failed
-      `GetUpgrades` doesn't kill the page).
-- [ ] C6 `feat(ui): update flow` — AC/battery precondition banner before commit, progress
-      state, reboot-required banner, failure banner with retry, post-update release notes;
-      polkit lock emblem on the Install control; declined auth degrades quietly (toast).
+- [x] C5+C6 `feat(ui): Firmware page + update flow` — landed as ONE commit (the page and
+      the flow share one view-model): device list with per-device update availability and
+      per-device degradation; metadata refresh action (failure = toast, never a page
+      state); battery precondition surfaced BEFORE commit; progress via busy banner;
+      reboot-required banner computed from fwupd update states; failure banner with retry;
+      post-update "what changed"; lock emblem on Install; declined auth = quiet toast
+      (ADR-0004). Also fixes a packaging gap: `core/firmware_policy.py` and
+      `providers/fwupd.py` were missing from `src/meson.build` install lists (the .deb
+      would have crashed at import). **Read-only surface validated on the real E16 Gen 2**
+      (container + host system-bus mount, AppArmor unconfined for the probe): 20 devices
+      mapped, real NOTHING_TO_DO→[] path hit, battery precondition (62%, 25%) read live.
 - [ ] C7 `docs: fwupd module doc + quirks`.
 - [ ] C8 `docs: close milestone M3; release v0.4.0 (BETA)`.
 

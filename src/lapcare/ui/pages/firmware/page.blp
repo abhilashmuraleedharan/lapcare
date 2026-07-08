@@ -1,0 +1,90 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Firmware: per-device rows are built in code (dynamic count); the blueprint
+// provides the four-state shell, the flow banners, and the toast overlay.
+using Gtk 4.0;
+using Adw 1;
+
+template $LapcareFirmwarePage: Adw.Bin {
+  Adw.ToastOverlay toast_overlay {
+    child: Adw.ToolbarView {
+      content: Gtk.Box {
+        orientation: vertical;
+
+        Adw.Banner busy_banner {}
+
+        Adw.Banner flow_banner {}
+
+        Adw.Banner reboot_banner {}
+
+        Gtk.Stack stack {
+          vexpand: true;
+          transition-type: crossfade;
+
+          Gtk.StackPage {
+            name: "loading";
+
+            child: Gtk.Box {
+              orientation: vertical;
+              valign: center;
+              spacing: 12;
+
+              Gtk.Spinner {
+                spinning: true;
+                halign: center;
+                width-request: 32;
+                height-request: 32;
+              }
+
+              Gtk.Label {
+                label: _("Reading firmware information…");
+
+                styles [
+                  "dim-label",
+                ]
+              }
+            };
+          }
+
+          Gtk.StackPage {
+            name: "ready";
+
+            child: Gtk.ScrolledWindow {
+              hscrollbar-policy: never;
+
+              child: Adw.Clamp {
+                maximum-size: 800;
+
+                child: Gtk.Box devices_container {
+                  orientation: vertical;
+                  spacing: 24;
+                  margin-top: 24;
+                  margin-bottom: 24;
+                  margin-start: 12;
+                  margin-end: 12;
+                };
+              };
+            };
+          }
+
+          Gtk.StackPage {
+            name: "unavailable";
+
+            child: Adw.StatusPage unavailable_status {
+              icon-name: "application-x-firmware-symbolic";
+              title: _("No Firmware Information");
+            };
+          }
+
+          Gtk.StackPage {
+            name: "error";
+
+            child: Adw.StatusPage error_status {
+              icon-name: "dialog-error-symbolic";
+              title: _("Could Not Read Firmware Information");
+            };
+          }
+        }
+      };
+    };
+  }
+}
