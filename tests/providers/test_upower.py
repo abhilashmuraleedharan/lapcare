@@ -22,10 +22,15 @@ from lapcare.providers.upower import UPowerDbus
 
 
 class TestUPowerProvider(dbusmock.DBusTestCase):
+    # The private system bus is session-shared (tests/providers/conftest.py);
+    # the inherited tearDownClass would stop it for every later test class.
     @classmethod
     def setUpClass(cls) -> None:
-        cls.start_system_bus()
         cls.dbus_con = cls.get_dbus(system_bus=True)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        pass
 
     def setUp(self) -> None:
         self.p_mock, self.obj_upower = self.spawn_server_template(

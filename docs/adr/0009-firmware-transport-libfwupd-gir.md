@@ -46,19 +46,27 @@ to.
 dependency (constitution invariant #7 requires this ADR for that).
 
 Provider methods stay synchronous-inside-`async def`, matching every other provider
-(`Fwupd.Client.get_devices()` etc. block; they run off the GTK main thread via the Scheduler,
-same as `upower.py`'s `call_sync`). The GLib-native async variants
-(`get_devices_async`/`install_release_async`) are **not** used — mixing two different async
-idioms (asyncio-via-Scheduler and GLib-callback-via-`_finish`) in one provider would violate
-"provider/platform I/O is `async def`" without adding anything the Scheduler doesn't already
-give us.
+(`Fwupd.Client.get_devices()` etc. block, same as `upower.py`'s `call_sync` — fast local
+calls, acceptable even on the 26.04 native scheduler where coroutines run on the GTK main
+thread). The one *slow* call, `install_release()` (download + flash, minutes), runs via
+`asyncio.to_thread` on a **dedicated client instance**: it must not block the GTK main thread
+on 26.04, and a separate client/context means concurrent short reads never contend with it.
+The GLib-native async variants (`get_devices_async`/`install_release_async`) are **not**
+used — mixing two different async idioms (asyncio-via-Scheduler and
+GLib-callback-via-`_finish`) in one provider would violate "provider/platform I/O is
+`async def`" for no gain.
 
-Progress (`notify::percentage`, `notify::status` on the `Fwupd.Client` instance) is forwarded
-through an `on_progress` callback parameter on `FirmwareProvider.install()`, wrapped in
-`GLib.idle_add` inside the provider before it reaches the callback — GObject signal emission
-happens synchronously on whatever thread is running `install_release()` (the scheduler's
-background thread on Ubuntu 24.04), so this is the same one-sanctioned-boundary pattern
-ADR-0007 already establishes, applied to a callback instead of a coroutine's result.
+Change notification and install progress use **raw `Gio.DBusConnection` signal
+subscriptions** (`Changed`/`Device{Added,Removed,Changed}` and `PropertiesChanged` for
+`Percentage`/`Status`), not `Fwupd.Client`'s GObject signals: measured against the dbusmock
+template, the client's own signals only fire after an async `connect_async()` proxy setup
+(the second async idiom this ADR rejects), and progress notifications emitted on the thread
+blocked inside `install_release()` could never reach a callback anyway. Likewise
+`battery_precondition()` reads `BatteryLevel`/`BatteryThreshold` via a raw
+`Properties.GetAll` — the client's cached getters only populate from a later
+`PropertiesChanged`, so a fresh client always reads the 101 "unknown" sentinel. This hybrid
+(libfwupd for everything involving download/verify/install semantics; raw GDBus for signals
+and daemon properties) is deliberate, not drift.
 
 `core/ports.py` stays stdlib-only: `FirmwareProvider.install()` takes and returns plain
 `core.models` types (`FirmwareRelease.version`, a `str`), never a `Fwupd.Release` GObject. The
@@ -70,16 +78,34 @@ port boundary.
 
 - One new runtime dependency: `gir1.2-fwupd-2.0` (pulls `libfwupd2`/`libfwupd3`). Both
   supported LTS releases ship it; no PPA needed.
+- **`Client.refresh_remote()` is itself a client-side network operation**, not a D-Bus call
+  the daemon services: `fwupd_client_refresh_remote_async()` downloads the remote's signature
+  and metadata directly (`fwupd_client_download_bytes_async`, the same in-process downloader
+  `install_release()` uses for firmware) and only hands the verified result to the daemon via
+  `UpdateMetadata` once both fetches succeed (confirmed against
+  `libfwupd/fwupd-client.c` upstream). "Metadata refresh" therefore makes a real outbound
+  HTTPS request from the Lapcare process, same trust boundary as a firmware download — worth
+  knowing before assuming every network-touching operation in this feature is delegated to a
+  system daemon. It is still libfwupd's downloader and verification code, not ours.
 - Firmware download/verify/fd-passing code does not exist in this codebase — it is entirely
   `libfwupd`'s, keeping `docs/security-design.md`'s "Lapcare never downloads firmware" claim
   literally true and out of our threat model.
+- **Every `Fwupd.Client` must get a persistent `GLib.MainContext` via `set_main_context()`
+  immediately after construction.** Without one, each libfwupd *sync* helper creates and then
+  frees a fresh context, leaving the client's internal `GDBusProxy` bound to freed memory —
+  the next daemon signal or name-owner change dispatches into it and crashes whatever GLib
+  main loop runs next (measured: reproducible process abort; root cause confirmed in upstream
+  `fwupd-client-sync.c` `fwupd_client_helper_free`). `providers/fwupd.py:_new_client()` is
+  the single sanctioned constructor.
 - python-dbusmock ships **no** fwupd template (checked against upstream
   `dbusmock/templates/` at M3 start — the M2 retrospective's assumption that it did was
-  wrong). Tests use a small local template (`tests/dbusmock_templates/fwupd.py`, built from
-  `dbusmock`'s `SKELETON` pattern) implementing the read-only surface
-  (`GetDevices`/`GetUpgrades`/`GetReleases`/`GetRemotes`) plus a scriptable `Install` that
-  can be told to succeed, fail, or require reboot — real LVFS downloads are never exercised
-  in CI.
+  wrong). Tests use a small local template (`tests/dbusmock_templates/fwupd.py`) implementing
+  the read-only surface (`GetDevices`/`GetUpgrades`/`GetReleases`/`GetRemotes` plus
+  convenience `AddDevice`/`AddUpgrade`/`AddRemote` methods). Install *failure* paths are
+  covered without a mocked `Install`: libfwupd validates releases client-side before touching
+  the network (a release with no URIs fails deterministically), and polkit-denial translation
+  is unit-tested with constructed `GLib.Error`s. Real LVFS downloads are never exercised in
+  CI.
 - The actual firmware-write path (`install_release`, real HTTPS download, real polkit prompt,
   real reboot) cannot be exercised non-interactively at all — `pkexec`/polkit requires an
   interactive human at a GUI prompt by design (ADR-0004). It is validated manually on the
