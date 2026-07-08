@@ -1,3 +1,12 @@
+lapcare (0.4.0) unstable; urgency=medium
+
+  * Milestone M3 (beta): Firmware page — device list with available
+    upgrades via fwupd/LVFS, metadata refresh, guided update flow
+    (battery preconditions, progress, reboot-required, retryable
+    failures); new runtime dependency gir1.2-fwupd-2.0.
+
+ -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Wed, 08 Jul 2026 12:00:00 +0000
+
 lapcare (0.3.0) unstable; urgency=medium
 
   * Milestone M2 (public alpha): Battery page — live status via UPower,

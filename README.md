@@ -2,9 +2,11 @@
 
 [![CI](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml/badge.svg)](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml)
 
-> **Status: public alpha (v0.3.0).** Read-only, zero privileged operations. Dashboard,
-> Battery, and Hardware pages are usable today; see [Planned features](#planned-features)
-> and `ROADMAP.md` for what's next.
+> **Status: beta (v0.4.0).** Dashboard, Battery, Hardware, and Firmware pages are usable
+> today. Firmware installs delegate entirely to fwupd (its polkit prompt and LVFS signature
+> verification govern them); everything else is read-only. Field reports from real firmware
+> updates are what this beta needs — see [Planned features](#planned-features) and
+> `ROADMAP.md` for what's next.
 
 **Lapcare** is a native Linux desktop application that gives ThinkPad owners the system
 insight and hardware management they lost when they left Lenovo Vantage behind: hardware
@@ -21,23 +23,26 @@ rather than reinventing them.
 
 [fwupd]: https://fwupd.org
 
-## Available now (v0.3.0)
+## Available now (v0.4.0)
 
 - System overview: model, BIOS, OS, kernel, uptime, ThinkPad detection (Dashboard)
 - Battery health: live charge status, wear analysis, health classification, cycle count,
   daily wear history with chart, dual-battery support (Battery)
 - Full hardware information: DMI identity, CPU/memory, PCI/USB inventory (Hardware)
+- Firmware updates via fwupd/LVFS: device list with available upgrades, metadata refresh,
+  guided update flow — battery preconditions checked up front, progress, reboot handling
+  (Firmware)
 
 ## Planned features
 
-- Firmware/BIOS update management (fwupd/LVFS) — M3
 - Storage SMART/NVMe health — M4
 - One-click diagnostics with an explainable health dashboard — M4
 - Diagnostic report export (redacted by default) — M4
 
 Every feature degrades gracefully on missing tools, unsupported hardware, or declined
-authorization. Through 1.0, Lapcare is read-only: it observes your hardware, it does not
-mutate it.
+authorization. Lapcare itself never writes to your hardware: the one mutating feature,
+firmware installation, is performed by fwupd under fwupd's own authorization policy and
+LVFS signature verification.
 
 ## Project documents
 
@@ -50,14 +55,14 @@ mutate it.
 | `AGENTS.md` | Entry point for AI coding agents |
 | `DECISIONS.md` | Index of architecture decision records |
 
-## Installing the alpha
+## Installing the beta
 
 Download the `.deb` for your Ubuntu release from the
-[v0.3.0 release page](https://github.com/abhilashmuraleedharan/lapcare/releases/tag/v0.3.0)
+[v0.4.0 release page](https://github.com/abhilashmuraleedharan/lapcare/releases/tag/v0.4.0)
 and install it:
 
 ```sh
-sudo apt install ./lapcare_0.3.0_all-ubuntu-24.04.deb   # or -ubuntu-26.04.deb
+sudo apt install ./lapcare_0.4.0_all-ubuntu-24.04.deb   # or -ubuntu-26.04.deb
 ```
 
 A PPA is planned for the 1.0 release (see `docs/release.md`); until then, GitHub Releases
