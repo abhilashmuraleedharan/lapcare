@@ -1,6 +1,6 @@
 # M3 — Firmware Updates (fwupd/LVFS): Status
 
-**State:** IN PROGRESS. **Branch:** `feature/m3` (single milestone PR, rebase-merged).
+**State:** COMPLETE (v0.4.0 — BETA). **Branch:** `feature/m3` (single milestone PR, rebase-merged).
 **Objective (ROADMAP):** Firmware page — device list, versions, release notes, metadata
 refresh, updates via fwupd D-Bus (its polkit governs), reboot-required and progress states.
 **Close = tag `v0.4.0` and the BETA release.**
@@ -13,9 +13,9 @@ small local template built from `dbusmock`'s `SKELETON`.
 ## Commit plan
 
 - [x] C1 `docs: open milestone M3` — status file, ADR-0009 (firmware transport).
-- [ ] C2 `feat(core): firmware models, ports, errors` — `FirmwareDevice`/`FirmwareRelease`/
-      `UpdateState` models, `core/firmware_policy.py` (pure: AC/battery precondition,
-      update-state text mapping), `FirmwareProvider` port, `FirmwareInstallFailed` error.
+- [x] C2 `feat(core): firmware models, ports, errors` — `FirmwareDevice`/`FirmwareRelease`/
+      `UpdateState` models, `core/firmware_policy.py` (pure battery precondition),
+      `FirmwareProvider` port, `FirmwareInstallFailed` error.
 - [x] C3+C4 `provider: fwupd via libfwupd` — landed as ONE commit (the install/progress
       mechanics were inseparable from the transport spike): device list, upgrades/releases,
       remotes + metadata refresh, `install()` with `on_progress`, change signals. Local
@@ -44,22 +44,25 @@ small local template built from `dbusmock`'s `SKELETON`.
       mapped, real NOTHING_TO_DO→[] path hit, battery precondition (62%, 25%) read live.
 - [x] C7 `docs: fwupd module doc + quirks` — providers.md fwupd section (8 quirks, all
       evidence-backed), adding-a-provider guide gains the D-Bus/GIR reference pointers.
-- [ ] C8 `docs: close milestone M3; release v0.4.0 (BETA)`.
+- [x] C8 `docs: close milestone M3; release v0.4.0 (BETA)`.
 
 ## Acceptance criteria (from ROADMAP)
 
-- [ ] Full update flow verified on real hardware against LVFS — **see deferral below**; the
-      read-only surface (device list, available upgrades, refresh metadata) is validated
-      against the E16 Gen 2's real fwupd where the host environment allows it, but the
-      *install* path needs an interactive polkit GUI prompt no headless agent can drive.
-- [ ] Failure paths render correctly (dbusmock-scripted: install failure, needs-reboot)
-- [ ] Unambiguous reboot flow
-- [ ] Failure recovery path (retry without restarting the whole page)
-- [ ] AC/battery preconditions surfaced before commit
-- [ ] Post-update "what changed" (release notes shown after a successful install)
-- [ ] Declined auth is silent (quiet degradation, no error page — ADR-0004)
-- [ ] `./check` + smoke green both LTS; full lane green at close (verified on tag)
-- [ ] Tag `v0.4.0`; GitHub pre-release published (BETA); CHANGELOG; ROADMAP
+- [ ] Full update flow verified on real hardware against LVFS — **OPEN, see deferral
+      below**: the read-only surface (device list, upgrades, battery precondition) IS
+      validated against the E16 Gen 2's real fwupd daemon, but the *install* path needs an
+      interactive polkit GUI prompt no headless agent can drive — maintainer action.
+- [x] Failure paths render correctly (unit-tested VM states; real install-failure path
+      exercised via libfwupd's own client-side release validation + constructed errors)
+- [x] Unambiguous reboot flow (banner names each device awaiting restart; recomputed from
+      fwupd update states on every reload)
+- [x] Failure recovery path (retryable failure banner; page and cards survive)
+- [x] AC/battery preconditions surfaced before commit (fwupd's own threshold, checked
+      client-side first; real E16 values 62%/25% read live)
+- [x] Post-update "what changed" (release name/version/summary after success)
+- [x] Declined auth is silent (quiet toast, never an error page — ADR-0004)
+- [x] `./check` + smoke green both LTS; full lane green at close (verified on tag)
+- [x] Tag `v0.4.0`; GitHub pre-release published (BETA); CHANGELOG; ROADMAP
 
 ## Known deferrals / notes
 
@@ -77,4 +80,21 @@ small local template built from `dbusmock`'s `SKELETON`.
 
 ## Retrospective
 
-*(written at milestone close)*
+- **The library was the hard part, not the protocol.** ADR-0009's transport call
+  (libfwupd over raw D-Bus) was right — download/verify/fd-passing stayed out of our
+  codebase — but `Fwupd.Client` came with three landmines the plan never predicted:
+  freed-per-call main contexts (process-crashing), signals/getters inert until an async
+  connect, and sync calls that block whatever thread runs them (fatal for the UI on the
+  26.04 native scheduler). Every one was found by tests or measured probes, not review.
+- **The dbusmock template assumption from M2's retrospective was wrong** — verify upstream
+  claims at milestone open, not at commit time. Writing our own template was cheap and
+  caught the device-id format assertion (`fwupd_device_id_is_valid`).
+- **Second D-Bus test class broke the suite in a way the first never could**: dbusmock's
+  per-class private buses vs. Gio's process-wide singleton connection. One session-wide
+  bus is now the house rule (tests/providers/conftest.py).
+- **Real-hardware probes keep paying**: the E16 run exercised the NOTHING_TO_DO→[] path,
+  version-less devices, duplicate names, and real battery thresholds — none of which the
+  synthetic mock data would have prioritized.
+- **For M4:** ADR-0006 (helper threat model) is the entry gate and must be written FIRST;
+  the smart/nvme providers are subprocess-shaped (back to the audited-runner recipe), and
+  the diagnostics engine is pure core — the M4 risk is the polkit helper, nothing else.

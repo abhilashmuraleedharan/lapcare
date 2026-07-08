@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-07-08 (Milestone M3: Firmware Updates — BETA)
+
+**The beta release.** Still read-only in effect for CI-verifiable paths;
+firmware installation delegates entirely to fwupd (its polkit policy and LVFS
+signature verification govern every write). Supported targets: Ubuntu 24.04
+LTS and 26.04 LTS. Reference hardware: ThinkPad E16 Gen 2.
+
+### Added
+
+- **Firmware page**: every fwupd-managed device with its current version and
+  available upgrades (release notes, urgency); one-click metadata refresh
+  from LVFS; guided update flow — battery precondition surfaced *before*
+  committing, live progress, unambiguous reboot-required banner, retryable
+  failure banner, and a post-update "what changed" summary. Install controls
+  carry a lock emblem; declining the authorization prompt is a quiet
+  cancellation, never an error.
+- Provider: `fwupd` via libfwupd (GObject Introspection — ADR-0009), so
+  firmware download, signature verification, and installation remain fwupd's
+  own code; Lapcare never touches firmware bytes. Validated read-only against
+  the reference E16 Gen 2's live fwupd daemon (20 devices).
+- New runtime dependency: `gir1.2-fwupd-2.0`.
+
+### Fixed
+
+- Packaging: two modules added in this milestone's early commits were missing
+  from the meson install lists; the installed package would have failed to
+  start once firmware wiring landed.
+
+### Notes for testers (beta)
+
+- The end-to-end *install* path needs interactive polkit authorization and
+  real LVFS firmware, so it cannot run in CI — field reports from real
+  installs (any ThinkPad model) are the point of this beta. Please file
+  hardware reports via the issue templates.
+
 ## [0.3.0] — 2026-07-07 (Milestone M2: Battery Health & Wear — PUBLIC ALPHA)
 
 **The first announced release.** Pre-1.0 alpha: read-only, zero privileged
