@@ -36,6 +36,7 @@ known-first-party = ["lapcare"]
 "src/lapcare/app.py" = ["E402"]
 "src/lapcare/platform/dbus.py" = ["E402"]
 "src/lapcare/providers/upower.py" = ["E402"]
+"src/lapcare/providers/fwupd.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"

@@ -15,6 +15,7 @@ apt-get install -y --no-install-recommends \
     python3-gi-cairo \
     gir1.2-gtk-4.0 \
     gir1.2-adw-1 \
+    gir1.2-fwupd-2.0 \
     meson \
     ninja-build \
     blueprint-compiler \

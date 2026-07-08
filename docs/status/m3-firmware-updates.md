@@ -16,12 +16,21 @@ small local template built from `dbusmock`'s `SKELETON`.
 - [ ] C2 `feat(core): firmware models, ports, errors` — `FirmwareDevice`/`FirmwareRelease`/
       `UpdateState` models, `core/firmware_policy.py` (pure: AC/battery precondition,
       update-state text mapping), `FirmwareProvider` port, `FirmwareInstallFailed` error.
-- [ ] C3 `provider: fwupd (read-only)` — device list, upgrades/releases, remotes + metadata
-      refresh via `Fwupd.Client`; local dbusmock template; fixture-free (live D-Bus state, not
-      a filesystem capture — documented as a deviation in module docs).
-- [ ] C4 `provider: fwupd install + progress` — `install()` with `on_progress` callback
-      (`notify::percentage`/`notify::status` marshaled via `GLib.idle_add`), device/remote
-      change signals; dbusmock-scriptable success/failure/needs-reboot paths.
+- [x] C3+C4 `provider: fwupd via libfwupd` — landed as ONE commit (the install/progress
+      mechanics were inseparable from the transport spike): device list, upgrades/releases,
+      remotes + metadata refresh, `install()` with `on_progress`, change signals. Local
+      dbusmock template; fixture-free (live D-Bus state, not a filesystem capture —
+      documented as a deviation in module docs). Three findings that reshaped the design,
+      all recorded in ADR-0009/module docstring: (1) `Fwupd.Client` sync helpers free their
+      per-call `GMainContext`, leaving the internal proxy bound to freed memory — every
+      client needs `set_main_context()` with a persistent context or the process crashes on
+      the next daemon signal; (2) the client's GObject signals and battery getters only work
+      after an async `connect_async()`, so change/progress/battery use raw GDBus
+      subscriptions/`GetAll` instead; (3) `install_release()` runs via `asyncio.to_thread`
+      on a dedicated client — on 26.04's native scheduler, coroutines execute on the GTK
+      main thread, and a minutes-long flash there would freeze the UI. Test infrastructure:
+      one session-wide private system bus (two `DBusTestCase` classes each starting/stopping
+      their own bus leaves Gio's singleton connection dead — process abort).
 - [ ] C5 `feat(ui): Firmware page` — device list, per-device update availability, refresh
       metadata action; four-state page pattern; per-device degradation (one device's failed
       `GetUpgrades` doesn't kill the page).
