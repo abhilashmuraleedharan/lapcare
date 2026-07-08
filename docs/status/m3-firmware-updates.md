@@ -42,7 +42,8 @@ small local template built from `dbusmock`'s `SKELETON`.
       would have crashed at import). **Read-only surface validated on the real E16 Gen 2**
       (container + host system-bus mount, AppArmor unconfined for the probe): 20 devices
       mapped, real NOTHING_TO_DO→[] path hit, battery precondition (62%, 25%) read live.
-- [ ] C7 `docs: fwupd module doc + quirks`.
+- [x] C7 `docs: fwupd module doc + quirks` — providers.md fwupd section (8 quirks, all
+      evidence-backed), adding-a-provider guide gains the D-Bus/GIR reference pointers.
 - [ ] C8 `docs: close milestone M3; release v0.4.0 (BETA)`.
 
 ## Acceptance criteria (from ROADMAP)

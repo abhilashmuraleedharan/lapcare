@@ -2,7 +2,11 @@
 
 Extracted from the real M1 providers. Reference implementations: sysfs-based →
 `src/lapcare/providers/dmi.py`; command-based → `src/lapcare/providers/pci_usb.py`;
-port-composing → `src/lapcare/providers/thinkpad_acpi.py`.
+port-composing → `src/lapcare/providers/thinkpad_acpi.py`; raw D-Bus →
+`src/lapcare/providers/upower.py`; GObject-Introspection library over D-Bus →
+`src/lapcare/providers/fwupd.py` (tested against a local dbusmock template under
+`tests/dbusmock_templates/` when python-dbusmock ships none; D-Bus test classes share ONE
+session-wide private system bus — see `tests/providers/conftest.py`).
 
 A provider is the ONE module that knows a data source's paths, formats, and quirks.
 Checklist:
