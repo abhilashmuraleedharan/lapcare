@@ -53,3 +53,14 @@ class PrivilegedActionDenied(LapcareError):
     def __init__(self, action: str) -> None:
         self.action = action
         super().__init__(f"authorization declined: {action}")
+
+
+class FirmwareInstallFailed(LapcareError):
+    """fwupd itself reported an install failure (not a polkit decline — that's
+    PrivilegedActionDenied). Rendered as a retryable failure banner, never a
+    full-page error (a firmware install failure is not a page failure)."""
+
+    def __init__(self, device_id: str, detail: str) -> None:
+        self.device_id = device_id
+        self.detail = detail
+        super().__init__(f"firmware install failed ({device_id}): {detail}")
