@@ -15,3 +15,4 @@ a silent divergence.
 | 0006 | Privileged-helper threat model & validation spec | **Reserved** | Must be written and accepted before milestone M4 begins (blocking entry gate) |
 | [0007](docs/adr/0007-async-integration-per-lts.md) | Async integration per Ubuntu LTS | Accepted | Native `gi.events` on 26.04+; dedicated background asyncio loop thread + `GLib.idle_add` on 24.04; one scheduler interface |
 | [0008](docs/adr/0008-capability-model-deferred.md) | Capability model | Accepted | Deferred; `availability()` is the seed; ADR triggered by first write feature (M6) or second vendor (M10) |
+| [0009](docs/adr/0009-firmware-transport-libfwupd-gir.md) | Firmware transport | Accepted | `Fwupd.Client` (GObject Introspection over libfwupd), not raw D-Bus; fwupd owns download/verify/fd-passing; new runtime dep `gir1.2-fwupd-2.0` |
