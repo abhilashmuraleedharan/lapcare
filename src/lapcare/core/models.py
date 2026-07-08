@@ -131,3 +131,46 @@ class ThinkpadInfo:
     dmi_vendor_lenovo: bool = False
     acpi_driver_loaded: bool = False
     model: str | None = None  # product_family when identifiable
+
+
+class UpdateState(Enum):
+    """Fwupd.UpdateState, narrowed to what the UI distinguishes (fwupd provider)."""
+
+    UNKNOWN = "unknown"
+    PENDING = "pending"  # scheduled, needs reboot to apply (offline updates)
+    SUCCESS = "success"
+    FAILED = "failed"
+    FAILED_TRANSIENT = "failed-transient"  # retry may succeed (e.g. lost connection)
+    NEEDS_REBOOT = "needs-reboot"
+
+
+@dataclass(frozen=True)
+class FirmwareDevice:
+    """One device fwupd knows about (fwupd provider)."""
+
+    id: str  # fwupd's internal device id — opaque, not a GUID we interpret
+    name: str | None = None  # e.g. "ThinkPad E16 Gen 2 System Firmware"
+    summary: str | None = None
+    vendor: str | None = None
+    version: str | None = None  # currently installed version
+    version_lowest: str | None = None  # oldest version fwupd will allow flashing
+    updatable: bool = False  # DeviceFlags.UPDATABLE
+    needs_reboot: bool = False  # DeviceFlags.NEEDS_REBOOT (device, not update, flag)
+    plugin: str | None = None  # e.g. "uefi_capsule", "thunderbolt" — which fwupd backend
+    update_state: UpdateState = UpdateState.UNKNOWN
+    update_error: str | None = None  # set when update_state is FAILED*
+
+
+@dataclass(frozen=True)
+class FirmwareRelease:
+    """One available release for a device (fwupd provider). Identified by
+    ``version`` within a device — the provider re-resolves the live
+    ``Fwupd.Release`` object by (device_id, version) at install time rather
+    than carrying it through the port boundary (ADR-0009)."""
+
+    version: str
+    name: str | None = None
+    summary: str | None = None
+    description: str | None = None  # release notes; AppStream markup, rendered as-is
+    size: int | None = None  # bytes, when fwupd reports it
+    urgency: str | None = None  # e.g. "critical", "high", "medium", "low"

@@ -23,6 +23,8 @@ from lapcare.core.models import (
     BatteryStatus,
     BatteryWear,
     CpuMemSummary,
+    FirmwareDevice,
+    FirmwareRelease,
     OsInfo,
     PciDevice,
     SystemIdentity,
@@ -108,6 +110,42 @@ class BatteryStatusProvider(Protocol):
 
     def subscribe(self, on_change: Callable[[], None]) -> None:
         """Invoke ``on_change`` on the GTK main thread when status changes."""
+        ...
+
+
+class FirmwareProvider(Protocol):
+    """Firmware devices/releases/updates via fwupd (providers.fwupd, ADR-0009).
+
+    ``install()`` blocks for the whole download+verify+flash flow (fwupd's own
+    job, not ours) and reports progress through ``on_progress`` — called with
+    (percentage 0-100 or None if unknown, human status text), always on the
+    GTK main thread. Raises ``FirmwareInstallFailed`` on a fwupd-reported
+    failure and ``PrivilegedActionDenied`` when polkit auth is declined —
+    callers must not treat the latter as an error (ADR-0004).
+    """
+
+    def availability(self) -> Availability: ...
+
+    async def list_devices(self) -> list[FirmwareDevice]: ...
+
+    async def list_upgrades(self, device_id: str) -> list[FirmwareRelease]: ...
+
+    async def refresh_metadata(self) -> None: ...
+
+    def battery_precondition(self) -> tuple[int | None, int | None]:
+        """Current (battery_level, threshold) as fwupd reports them — cheap,
+        synchronous, for the UI to check before offering Install."""
+        ...
+
+    async def install(
+        self,
+        device_id: str,
+        release_version: str,
+        on_progress: Callable[[int | None, str], None],
+    ) -> None: ...
+
+    def subscribe(self, on_change: Callable[[], None]) -> None:
+        """Invoke ``on_change`` on the GTK main thread on device/remote changes."""
         ...
 
 

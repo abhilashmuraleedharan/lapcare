@@ -8,13 +8,20 @@ import dataclasses
 import pytest
 
 from lapcare.core.errors import (
+    FirmwareInstallFailed,
     LapcareError,
     PrivilegedActionDenied,
     ProviderParseError,
     ProviderTimeout,
     ProviderUnavailable,
 )
-from lapcare.core.models import Availability, SystemIdentity, ThinkpadInfo
+from lapcare.core.models import (
+    Availability,
+    FirmwareDevice,
+    SystemIdentity,
+    ThinkpadInfo,
+    UpdateState,
+)
 
 
 def test_models_are_frozen() -> None:
@@ -51,3 +58,16 @@ def test_error_hierarchy() -> None:
         PrivilegedActionDenied("io.github.abhilashmuraleedharan.lapcare.smart-report"),
     ):
         assert isinstance(exc, LapcareError)
+
+
+def test_firmware_device_minimal() -> None:
+    device = FirmwareDevice(id="abc123", updatable=True)
+    assert device.update_state is UpdateState.UNKNOWN
+    assert device.version is None
+
+
+def test_firmware_install_failed_carries_structure() -> None:
+    exc = FirmwareInstallFailed("abc123", "checksum mismatch")
+    assert isinstance(exc, LapcareError)
+    assert exc.device_id == "abc123"
+    assert "abc123" in str(exc)
