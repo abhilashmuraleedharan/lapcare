@@ -75,3 +75,23 @@ Runs `lspci -mm` and `lsusb` (packages: pciutils, usbutils) via the audited runn
 | lsusb includes root hubs (`1d6b:*`) — real devices; UI may filter later | E16 capture: 7 devices incl. hubs |
 | lspci `-r`/`-p` revision tokens are skipped in parsing | parser |
 | Cloud/CI VMs can have NO USB subsystem — lsusb exits nonzero ("unable to initialize usb spec"). Consumers must degrade per-panel, not per-page | GitHub Actions runner, 2026-07 |
+
+## fwupd (`FwupdGir`) — implements FirmwareProvider
+
+`gi.repository.Fwupd` (`Fwupd.Client`) over the system bus — libfwupd, not raw D-Bus
+calls, so download/signature-verify/fd-passing stay fwupd's code (ADR-0009). Change and
+progress signals and daemon battery properties DO use raw GDBus (subscriptions +
+`Properties.GetAll`) — see the module docstring and ADR-0009 for why the client's own
+GObject signals and cached getters can't be used. Local dbusmock template:
+`tests/dbusmock_templates/fwupd.py` (upstream ships none).
+
+| Quirk | Evidence |
+|---|---|
+| **Every `Fwupd.Client` needs `set_main_context()` with a persistent context** — the sync helpers otherwise free the per-call context the internal proxy stays bound to; the next daemon signal crashes the process. Use `providers/fwupd.py:_new_client()` only | measured; upstream `fwupd-client-sync.c` |
+| `GetUpgrades` raises `NothingToDo`/`NotFound` for "no newer release" → empty list (data, not unavailability) | E16 Gen 2 live probe (KEK CA devices) |
+| Devices can report `version=None` (CPU microcode, UEFI KEK) and duplicate display names ("UEFI Device Firmware" ×8 on the E16) | E16 Gen 2 live probe, 20 devices |
+| `BatteryLevel`/`BatteryThreshold` sentinel **101 = unknown** → None; real E16 values 62%/25% | E16 live probe |
+| `Percentage = 0` means unknown (per upstream D-Bus doc) → None in progress callbacks | `src/org.freedesktop.fwupd.xml` |
+| `refresh_remote()` downloads metadata **in-process over HTTPS** (only `UpdateMetadata` goes to the daemon); only ENABLED+DOWNLOAD remotes are refreshable | upstream `fwupd-client.c`; ADR-0009 |
+| Device IDs are 40-char sha1 hex; libfwupd hard-asserts the format (`fwupd_device_id_is_valid`) — never invent IDs in tests | dbusmock template development |
+| No fwupd daemon (containers/CI) or AppArmor-denied bus → ProviderUnavailable(TOOL_MISSING, fwupd) | container validation |
