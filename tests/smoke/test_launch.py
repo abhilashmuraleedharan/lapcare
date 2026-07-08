@@ -61,3 +61,6 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     # battery and correctly reach the no-battery unavailable state.
     assert "battery ready" in output or "battery unavailable: no batteries" in output, output
     assert "hardware ready" in output, output
+    # Firmware: real machines reach ready; containers/CI have no fwupd
+    # daemon (or a daemon reporting zero devices) — both log "unavailable".
+    assert "firmware ready" in output or "firmware unavailable" in output, output

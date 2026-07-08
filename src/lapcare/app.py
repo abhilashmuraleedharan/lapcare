@@ -55,6 +55,7 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     from lapcare.platform.history import SqliteHistoryStore
     from lapcare.providers.battery_sysfs import BatterySysfs
     from lapcare.providers.dmi import DmiSysfs
+    from lapcare.providers.fwupd import FwupdGir
     from lapcare.providers.os_info import OsInfoProc
     from lapcare.providers.pci_usb import PciUsbTools
     from lapcare.providers.thinkpad_acpi import ThinkpadAcpiSysfs
@@ -63,6 +64,8 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     from lapcare.ui.pages.battery.view_model import BatteryViewModel
     from lapcare.ui.pages.dashboard.view import DashboardPage
     from lapcare.ui.pages.dashboard.view_model import DashboardViewModel
+    from lapcare.ui.pages.firmware.view import FirmwarePage
+    from lapcare.ui.pages.firmware.view_model import FirmwareViewModel
     from lapcare.ui.pages.hardware.view import HardwarePage
     from lapcare.ui.pages.hardware.view_model import HardwareViewModel
     from lapcare.ui.pages.placeholder.view import PlaceholderPage
@@ -96,10 +99,12 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                     status=UPowerDbus(),
                     history=SqliteHistoryStore(),
                 )
+                firmware_vm = FirmwareViewModel(scheduler, firmware=FwupdGir())
                 pages = [
                     ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),
                     ("battery", _("Battery"), BatteryPage(battery_vm)),
                     ("hardware", _("Hardware"), HardwarePage(hardware_vm)),
+                    ("firmware", _("Firmware"), FirmwarePage(firmware_vm)),
                     ("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel())),
                 ]
                 window = MainWindow(application=self, pages=pages)
