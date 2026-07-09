@@ -37,9 +37,16 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
       passed: stock Adwaita rows/buttons with text labels everywhere, and every colored
       status pairs its color with words. Audit recorded as a per-release checklist in
       docs/testing.md.
-- [ ] C4 `hardening: crash audit` — sweep every page's error/degradation paths for
-      crashers (GLib criticals, unhandled exceptions in callbacks, re-entrancy); fix what
-      the sweep finds.
+- [x] C4 `hardening: crash audit` — sweep results: every `scheduler.submit` has a real
+      error handler; all re-entrancy guarded by busy flags; no division/None hazards in
+      parsers or the chart. **One real field bug found and fixed:**
+      `AdwPreferencesRow:use-markup` defaults to TRUE, so any hardware-derived string
+      (disk model, USB product name, fwupd device name) containing `&`/`<` was parsed as
+      Pango markup and the row text silently BLANKED (measured — only a Gtk-WARNING the
+      smoke test didn't fail on). Every row carrying hardware/tool strings now sets
+      `use_markup=False` (17 code sites + 16 template rows); smoke now fails on the
+      "Failed to set text" warning; the SMART parser gained a hostile-JSON-types fuzz
+      test (the helper guarantees valid JSON, never a valid schema).
 - [ ] C5 `docs: user guide + packaging guide` — `docs/user-guide.md` (install, every
       page, what the auth prompts mean, troubleshooting, privacy/redaction);
       `docs/packaging.md` (paths, metainfo, helper/polkit uninstall behavior — promised by

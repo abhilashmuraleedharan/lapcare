@@ -60,7 +60,7 @@ class BatteryPage(Adw.Bin):
         self.stack.set_visible_child_name(state)
 
     def _property_row(self, title: str, subtitle: str) -> Adw.ActionRow:
-        row = Adw.ActionRow(title=title, subtitle=subtitle)
+        row = Adw.ActionRow(title=title, subtitle=subtitle, use_markup=False)
         row.add_css_class("property")
         return row
 
