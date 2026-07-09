@@ -23,6 +23,7 @@ from lapcare.core.models import (
     BatteryStatus,
     BatteryWear,
     CpuMemSummary,
+    DiskUsage,
     FirmwareDevice,
     FirmwareRelease,
     OsInfo,
@@ -30,6 +31,7 @@ from lapcare.core.models import (
     SmartReport,
     StorageDevice,
     SystemIdentity,
+    TemperatureReading,
     ThinkpadInfo,
     UsbDevice,
     WearSnapshot,
@@ -167,6 +169,23 @@ class StorageProvider(Protocol):
     async def list_devices(self) -> list[StorageDevice]: ...
 
     async def read_smart(self, device_name: str) -> SmartReport: ...
+
+
+class ThermalProvider(Protocol):
+    """Temperature sensors (providers.hwmon). Empty list = no sensors —
+    data, not unavailability."""
+
+    def availability(self) -> Availability: ...
+
+    async def list_temperatures(self) -> list[TemperatureReading]: ...
+
+
+class DiskUsageProvider(Protocol):
+    """Filesystem usage for real mounts (providers.disk_usage)."""
+
+    def availability(self) -> Availability: ...
+
+    async def list_usage(self) -> list[DiskUsage]: ...
 
 
 class HistoryStore(Protocol):

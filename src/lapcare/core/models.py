@@ -216,3 +216,67 @@ class SmartReport:
     # target it — never logged above DEBUG, excluded from exports by default.
     serial_number: str | None = None
     messages: tuple[str, ...] = ()  # smartctl error/warning strings (data quality)
+
+
+@dataclass(frozen=True)
+class TemperatureReading:
+    """One hwmon temperature sensor (hwmon provider). E16 Gen 2 quirk: the
+    thinkpad EC chip exposes unpopulated slots that read as implausible
+    values (2 °C) or fail to read entirely — consumers judge on plausible
+    maxima, never on raw slot count."""
+
+    chip: str  # hwmon "name", e.g. "thinkpad", "coretemp", "nvme"
+    label: str | None  # e.g. "CPU", "Package id 0"; None when unlabeled
+    celsius: float
+
+
+@dataclass(frozen=True)
+class DiskUsage:
+    """Filesystem usage for one real mount (disk_usage provider)."""
+
+    mountpoint: str
+    total_bytes: int
+    free_bytes: int  # available to unprivileged users (f_bavail)
+
+
+class CheckStatus(Enum):
+    """Outcome of one diagnostic check (core.diagnostics)."""
+
+    OK = "ok"
+    WARNING = "warning"
+    CRITICAL = "critical"
+    SKIPPED = "skipped"  # could not measure — skip_code says why
+
+
+class Confidence(Enum):
+    """How much a diagnostic signal should be trusted (ROADMAP M4: the health
+    score is per-signal-confidence-marked and labeled experimental)."""
+
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+@dataclass(frozen=True)
+class DiagnosticResult:
+    """One check's outcome. ``metrics`` carries machine-keyed evidence
+    (key, value-as-string) — the UI layer translates keys to labels; core
+    carries data, not prose (same rule as errors.py)."""
+
+    check_id: (
+        str  # "battery-wear" | "storage-health" | "firmware-currency" | "thermal" | "disk-space"
+    )
+    status: CheckStatus
+    confidence: Confidence
+    metrics: tuple[tuple[str, str], ...] = ()
+    skip_code: str = ""  # SKIPPED only: "no-data" | "unavailable" | "declined" | "not-requested"
+
+
+@dataclass(frozen=True)
+class DiagnosticsReport:
+    """All check results plus the explainable aggregate (core.diagnostics)."""
+
+    results: tuple[DiagnosticResult, ...]
+    score: int | None  # 0-100 over measured checks; None if nothing measured
+    measured: int  # checks that produced a verdict (non-SKIPPED)
+    total: int

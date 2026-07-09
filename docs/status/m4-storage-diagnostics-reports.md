@@ -44,9 +44,15 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       bug this page's tests exposed on 26.04: `GLibEventLoopScheduler.stop()` left the
       process-global gi.events asyncio policy installed, breaking any later
       `asyncio.run()` on the main thread — `stop()` now restores the previous policy.
-- [ ] C5 `feat(core): diagnostics engine + checks` — pure-core engine and the five initial
-      checks (battery wear, SMART, firmware currency, thermal sanity, disk space) +
-      minimal `hwmon` (temps) and `disk_usage` providers to feed them.
+- [x] C5 `feat(core): diagnostics engine + checks` — pure-core engine (`core/diagnostics.py`):
+      five checks as pure functions on Optional inputs, transparent score (OK=1/WARN=0.5/
+      CRIT=0 averaged over measured checks), per-signal confidence, SKIPPED-with-skip_code
+      for unmeasured signals; `run()` gathers via ports with per-source degradation and
+      touches the privileged SMART path ONLY with `include_storage_health=True` (declined
+      → SKIPPED("declined"), everything else still measured). Feeder providers: `hwmon`
+      (E16 capture: EC exposes unpopulated slots reading 2 °C/13 °C or failing outright —
+      plausibility bounds live in the engine, not the parser) and `disk_usage`
+      (/proc/mounts `/dev/*` filter, dedupe by source, `f_bavail`, octal-escape decode).
 - [ ] C6 `feat(ui): Diagnostics page + Dashboard health score` — one-click run (< 10 s),
       per-signal confidence, health score card on Dashboard labeled experimental,
       unmeasured signals are honest (SMART unmeasured until authorized).

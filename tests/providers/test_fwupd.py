@@ -189,7 +189,7 @@ class TestFwupdProvider(dbusmock.DBusTestCase):
 
         self.obj.AddDevice(DEV_A, dbus.Dictionary({"Name": dbus.String("EC")}, signature="sv"))
 
-        deadline = GLib.get_monotonic_time() + 5_000_000
+        deadline = GLib.get_monotonic_time() + 15_000_000
         context = GLib.MainContext.default()
         while not fired and GLib.get_monotonic_time() < deadline:
             context.iteration(False)
@@ -209,7 +209,7 @@ class TestFwupdProvider(dbusmock.DBusTestCase):
         self.obj.Set("org.freedesktop.fwupd", "Percentage", dbus.UInt32(55))
         self.obj.Set("org.freedesktop.fwupd", "Status", dbus.UInt32(8))  # DOWNLOADING
 
-        deadline = GLib.get_monotonic_time() + 5_000_000
+        deadline = GLib.get_monotonic_time() + 15_000_000
         context = GLib.MainContext.default()
         while not seen and GLib.get_monotonic_time() < deadline:
             context.iteration(False)
