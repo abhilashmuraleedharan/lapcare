@@ -62,8 +62,10 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
       gaps CI's fuller environment had masked (`libglib2.0-bin` for
       glib-compile-schemas, `gir1.2-gtk-4.0`/`gir1.2-adw-1` for blueprint-compiler's
       typelib lookup): the first PPA upload would have failed to build without them.
-- [ ] C7 `docs: health-score calibration review` — rationale for current thresholds,
-      what field data the beta collects, the calibration procedure for post-1.0 revisions.
+- [x] C7 `docs: health-score calibration review` — `docs/health-score-calibration.md`:
+      every threshold with its provenance, the accepted 1.0 limitations, the field-data
+      wishlist the beta should collect, and the revision procedure (constants + this
+      table + boundary tests move together; score-structure changes need an ADR).
 - [ ] C8 `docs: close engineering; hand off release gates` — status updated, ROADMAP
       note, maintainer runbook finalized.
 
