@@ -40,10 +40,12 @@ class GLibEventLoopScheduler:
 
     def __init__(self) -> None:
         self._loop: asyncio.AbstractEventLoop | None = None
+        self._previous_policy: Any = None
 
     def start(self) -> None:
         import gi.events
 
+        self._previous_policy = asyncio.get_event_loop_policy()
         policy = gi.events.GLibEventLoopPolicy()
         asyncio.set_event_loop_policy(policy)
         self._loop = policy.get_event_loop()
@@ -51,7 +53,13 @@ class GLibEventLoopScheduler:
 
     def stop(self) -> None:
         # The loop belongs to the GLib main context, which the application
-        # owns; nothing to tear down here.
+        # owns — but the asyncio POLICY installed by start() is process-global
+        # and must be restored: gi's policy refuses set_event_loop() on the
+        # main thread, so leaving it behind breaks any later asyncio.run()
+        # there (measured: the unit suite on 26.04 after scheduler tests).
+        if self._previous_policy is not None:
+            asyncio.set_event_loop_policy(self._previous_policy)
+            self._previous_policy = None
         self._loop = None
 
     def submit(

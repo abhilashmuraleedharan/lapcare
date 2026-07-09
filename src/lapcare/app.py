@@ -58,6 +58,7 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     from lapcare.providers.fwupd import FwupdGir
     from lapcare.providers.os_info import OsInfoProc
     from lapcare.providers.pci_usb import PciUsbTools
+    from lapcare.providers.storage_smart import StorageSmartPkexec
     from lapcare.providers.thinkpad_acpi import ThinkpadAcpiSysfs
     from lapcare.providers.upower import UPowerDbus
     from lapcare.ui.pages.battery.view import BatteryPage
@@ -70,6 +71,8 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     from lapcare.ui.pages.hardware.view_model import HardwareViewModel
     from lapcare.ui.pages.placeholder.view import PlaceholderPage
     from lapcare.ui.pages.placeholder.view_model import PlaceholderViewModel
+    from lapcare.ui.pages.storage.view import StoragePage
+    from lapcare.ui.pages.storage.view_model import StorageViewModel
     from lapcare.ui.window import MainWindow
 
     class LapcareApplication(Adw.Application):
@@ -100,11 +103,13 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                     history=SqliteHistoryStore(),
                 )
                 firmware_vm = FirmwareViewModel(scheduler, firmware=FwupdGir())
+                storage_vm = StorageViewModel(scheduler, storage=StorageSmartPkexec())
                 pages = [
                     ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),
                     ("battery", _("Battery"), BatteryPage(battery_vm)),
                     ("hardware", _("Hardware"), HardwarePage(hardware_vm)),
                     ("firmware", _("Firmware"), FirmwarePage(firmware_vm)),
+                    ("storage", _("Storage"), StoragePage(storage_vm)),
                     ("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel())),
                 ]
                 window = MainWindow(application=self, pages=pages)

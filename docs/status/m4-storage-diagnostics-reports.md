@@ -36,9 +36,14 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       ADR-0006 §12 pre-merge:** the E16's SK hynix NVMe lacks the optional self-test log,
       so `smartctl --all` sets exit bit 2 alongside complete healthy JSON — bit 2 is data
       quality, not failure; helper fatal bits narrowed to 0-1.
-- [ ] C4 `feat(ui): Storage page` — unprivileged inventory renders with zero prompts;
-      "Read health" action carries the lock emblem; declined auth = quiet toast; per-device
-      degradation.
+- [x] C4 `feat(ui): Storage page` — unprivileged inventory renders with zero prompts
+      (asserted in a VM test); "Read Health" carries the lock emblem; ONE prompt covers all
+      devices (`auth_admin_keep`; `PrivilegedActionDenied`/`ProviderUnavailable` abort the
+      run — no prompt storm); declined auth = quiet toast; per-device SMART failure = note
+      on that device. Smoke asserts the page on both LTS. Also fixed a latent scheduler
+      bug this page's tests exposed on 26.04: `GLibEventLoopScheduler.stop()` left the
+      process-global gi.events asyncio policy installed, breaking any later
+      `asyncio.run()` on the main thread — `stop()` now restores the previous policy.
 - [ ] C5 `feat(core): diagnostics engine + checks` — pure-core engine and the five initial
       checks (battery wear, SMART, firmware currency, thermal sanity, disk space) +
       minimal `hwmon` (temps) and `disk_usage` providers to feed them.

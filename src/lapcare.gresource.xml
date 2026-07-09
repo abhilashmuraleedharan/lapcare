@@ -8,5 +8,6 @@
     <file alias="ui/pages/firmware/page.ui">lapcare/ui/pages/firmware/page.ui</file>
     <file alias="ui/pages/hardware/page.ui">lapcare/ui/pages/hardware/page.ui</file>
     <file alias="ui/pages/placeholder/page.ui">lapcare/ui/pages/placeholder/page.ui</file>
+    <file alias="ui/pages/storage/page.ui">lapcare/ui/pages/storage/page.ui</file>
   </gresource>
 </gresources>
