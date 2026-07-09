@@ -47,10 +47,11 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
       `use_markup=False` (17 code sites + 16 template rows); smoke now fails on the
       "Failed to set text" warning; the SMART parser gained a hostile-JSON-types fuzz
       test (the helper guarantees valid JSON, never a valid schema).
-- [ ] C5 `docs: user guide + packaging guide` — `docs/user-guide.md` (install, every
-      page, what the auth prompts mean, troubleshooting, privacy/redaction);
-      `docs/packaging.md` (paths, metainfo, helper/polkit uninstall behavior — promised by
-      docs/release.md).
+- [x] C5 `docs: user guide + packaging guide` — `docs/user-guide.md` (install, every
+      page, what the two auth prompts mean and that declining is always safe, privacy,
+      troubleshooting table); `docs/packaging.md` (paths, deps, the libexecdir/polkit
+      exec.path lockstep warning, helper packaging rules, AppStream). Both linked from
+      README.
 - [ ] C6 `feat(release): PPA pipeline` — debian source-package build in CI from tags
       (`ppa-lane`), dput configuration, step-by-step maintainer runbook in
       docs/release.md; everything short of the upload (needs the maintainer's Launchpad
