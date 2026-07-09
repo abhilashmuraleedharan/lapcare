@@ -17,6 +17,7 @@ py.install_sources(
     'lapcare/core/diagnostics.py',
     'lapcare/core/firmware_policy.py',
     'lapcare/core/models.py',
+    'lapcare/core/report.py',
     'lapcare/core/ports.py',
   ],
   subdir: 'lapcare/core',
@@ -44,6 +45,7 @@ py.install_sources(
     'lapcare/platform/files.py',
     'lapcare/platform/history.py',
     'lapcare/platform/log.py',
+    'lapcare/platform/report.py',
     'lapcare/platform/scheduler.py',
     'lapcare/platform/subprocess.py',
   ],
@@ -105,6 +107,7 @@ py.install_sources(
 py.install_sources(
   [
     'lapcare/ui/pages/diagnostics/__init__.py',
+    'lapcare/ui/pages/diagnostics/report_render.py',
     'lapcare/ui/pages/diagnostics/view.py',
     'lapcare/ui/pages/diagnostics/view_model.py',
   ],

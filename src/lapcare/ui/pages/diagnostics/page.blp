@@ -1,71 +1,74 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Diagnostics: results are built in code (dynamic); the blueprint provides
-// the four-state shell, the busy banner, and the results container.
+// the four-state shell, the busy banner, the toast overlay, and the
+// results container.
 using Gtk 4.0;
 using Adw 1;
 
 template $LapcareDiagnosticsPage: Adw.Bin {
-  Adw.ToolbarView {
-    content: Gtk.Box {
-      orientation: vertical;
+  Adw.ToastOverlay toast_overlay {
+    child: Adw.ToolbarView {
+      content: Gtk.Box {
+        orientation: vertical;
 
-      Adw.Banner busy_banner {}
+        Adw.Banner busy_banner {}
 
-      Gtk.Stack stack {
-        vexpand: true;
-        transition-type: crossfade;
+        Gtk.Stack stack {
+          vexpand: true;
+          transition-type: crossfade;
 
-        Gtk.StackPage {
-          name: "loading";
+          Gtk.StackPage {
+            name: "loading";
 
-          child: Gtk.Spinner {
-            spinning: true;
-            halign: center;
-            valign: center;
-            width-request: 32;
-            height-request: 32;
-          };
-        }
+            child: Gtk.Spinner {
+              spinning: true;
+              halign: center;
+              valign: center;
+              width-request: 32;
+              height-request: 32;
+            };
+          }
 
-        Gtk.StackPage {
-          name: "ready";
+          Gtk.StackPage {
+            name: "ready";
 
-          child: Gtk.ScrolledWindow {
-            hscrollbar-policy: never;
+            child: Gtk.ScrolledWindow {
+              hscrollbar-policy: never;
 
-            child: Adw.Clamp {
-              maximum-size: 800;
+              child: Adw.Clamp {
+                maximum-size: 800;
 
-              child: Gtk.Box results_container {
-                orientation: vertical;
-                spacing: 24;
-                margin-top: 24;
-                margin-bottom: 24;
-                margin-start: 12;
-                margin-end: 12;
+                child: Gtk.Box results_container {
+                  orientation: vertical;
+                  spacing: 24;
+                  margin-top: 24;
+                  margin-bottom: 24;
+                  margin-start: 12;
+                  margin-end: 12;
+                };
               };
             };
-          };
+          }
+
+          Gtk.StackPage {
+            name: "unavailable";
+
+            child: Adw.StatusPage unavailable_status {
+              icon-name: "emblem-ok-symbolic";
+              title: _("Diagnostics Unavailable");
+            };
+          }
+
+          Gtk.StackPage {
+            name: "error";
+
+            child: Adw.StatusPage error_status {
+              icon-name: "dialog-error-symbolic";
+              title: _("Diagnostics Failed");
+            };
+          }
         }
-
-        Gtk.StackPage {
-          name: "unavailable";
-
-          child: Adw.StatusPage unavailable_status {
-            icon-name: "emblem-ok-symbolic";
-            title: _("Diagnostics Unavailable");
-          };
-        }
-
-        Gtk.StackPage {
-          name: "error";
-
-          child: Adw.StatusPage error_status {
-            icon-name: "dialog-error-symbolic";
-            title: _("Diagnostics Failed");
-          };
-        }
-      }
+      };
     };
   }
 }

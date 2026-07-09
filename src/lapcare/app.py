@@ -53,6 +53,7 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     # Providers and pages are imported and WIRED here and only here — the
     # composition root is the one module that sees concrete classes.
     from lapcare.platform.history import SqliteHistoryStore
+    from lapcare.platform.report import TextReportWriter
     from lapcare.providers.battery_sysfs import BatterySysfs
     from lapcare.providers.disk_usage import DiskUsageStatvfs
     from lapcare.providers.dmi import DmiSysfs
@@ -127,6 +128,9 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                     firmware=firmware,
                     thermal=thermal,
                     disk=disk,
+                    identity=dmi,
+                    os_info=os_info,
+                    writer=TextReportWriter(),
                 )
                 pages = [
                     ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),

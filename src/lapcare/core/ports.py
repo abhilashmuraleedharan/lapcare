@@ -188,6 +188,16 @@ class DiskUsageProvider(Protocol):
     async def list_usage(self) -> list[DiskUsage]: ...
 
 
+class ReportWriter(Protocol):
+    """Report file writing (platform.report).
+
+    Synchronous; call from provider-I/O context (inside a coroutine submitted
+    to the Scheduler), never directly on the GTK thread. Raises OSError — the
+    caller owns turning that into user-facing text."""
+
+    def write(self, path: str, content: str) -> None: ...
+
+
 class HistoryStore(Protocol):
     """Wear history persistence (platform.history, SQLite).
 
