@@ -16,6 +16,7 @@ endif
 
 subdir('src')
 subdir('data')
+subdir('helper')
 
 launcher_conf = configuration_data()
 launcher_conf.set('PYTHON', py.full_path())

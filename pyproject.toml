@@ -42,7 +42,8 @@ known-first-party = ["lapcare"]
 python_version = "3.12"
 strict = true
 mypy_path = "src"
-packages = ["lapcare"]
+# The privileged helper is standalone by design (ADR-0006) but still checked.
+files = ["src/lapcare", "helper/lapcare_helper.py"]
 
 [[tool.mypy.overrides]]
 module = "gi.*"

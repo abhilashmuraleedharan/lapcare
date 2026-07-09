@@ -14,13 +14,17 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
 
 ## Commit plan
 
-- [ ] C1 `docs: open milestone M4; ADR-0006 helper threat model` — this file, ADR-0006
+- [x] C1 `docs: open milestone M4; ADR-0006 helper threat model` — this file, ADR-0006
       (with upstream pkexec source verification: `exec.argv1` per-verb action matching,
       realpath canonicalization, clearenv), DECISIONS.md row.
-- [ ] C2 `feat(helper): privileged helper + polkit policy + injection suite` — the
+- [x] C2 `feat(helper): privileged helper + polkit policy + injection suite` — the
       stdlib-only helper, the `.policy` file, meson/debian packaging (libexec + polkit
       datadir, `Depends: pkexec`, `Recommends: smartmontools`), and the ADR-0006 §18
-      negative/injection test suite (runs the helper unprivileged, no pkexec).
+      negative/injection test suite (41 tests: subprocess layer runs the helper exactly as
+      pkexec would; import layer substitutes os/subprocess for execution hygiene). Meson
+      install verified in-container (0755, canonical libexec path, policy in
+      polkit-1/actions); debhelper compat-13 confirmed NOT to override libexecdir (the
+      `lib/$multiarch` override is compat ≤ 11 only — checked upstream meson.pm).
 - [ ] C3 `feat(core)+provider: storage models, port, storage_smart` — `StorageDevice` /
       `SmartHealth` models, `StorageProvider` port, unprivileged `/sys/block` inventory,
       `smartctl --json` parsing behind the helper via the audited runner (`pkexec` joins
