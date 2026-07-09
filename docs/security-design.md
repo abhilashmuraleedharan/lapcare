@@ -2,7 +2,8 @@
 
 How Lapcare is designed to be safe. This is the *design* document; the vulnerability
 *reporting* policy is `SECURITY.md`, and the privilege model decision is ADR-0004. The
-privileged helper's full threat model will be ADR-0006 (blocking gate for milestone M4).
+privileged helper's full threat model and validation spec is **ADR-0006** (accepted at
+M4 open; the helper ships since v0.5.0 with one verb, `smart-report`).
 
 ## Threat Model (summary)
 
@@ -26,14 +27,17 @@ risks, in order:
 - All tool output — even from root-owned tools — is untrusted input: size limits, strict JSON
   parsing, no dynamic evaluation of anything.
 
-### Privileged helper (M4+, per ADR-0004 / ADR-0006)
-- Fixed verb whitelist; one polkit action per verb; no free-form arguments.
+### Privileged helper (shipped M4, per ADR-0004 / ADR-0006)
+- Fixed verb whitelist (M4: `smart-report` only — verbs are demand-driven, ADR-0006 §3);
+  one polkit action per verb via `exec.path` + `exec.argv1` annotations; no free-form
+  arguments; exact argc.
 - Device targeting by enumerate-and-match against the helper's own `/sys/block` listing —
-  never user-supplied paths.
-- Root-owned, mode 0755, installed to `/usr/libexec/lapcare/`; short-lived; no daemon, no
-  socket, no state; stderr only, never logs command output at privileged level beyond exit
-  status.
-- Negative/injection test suite is part of its definition of done.
+  never user-supplied paths (ADR-0006 §6-7).
+- Root-owned, mode 0755, installed to `/usr/libexec/lapcare/lapcare-helper`; stdlib-only
+  Python, zero lapcare imports; short-lived; no daemon, no socket, no state, no env knobs;
+  one machine-readable stderr line on error, never argv echo.
+- Negative/injection test suite (`tests/helper/`) is part of its definition of done —
+  the required case list is ADR-0006 §18, verbatim.
 
 ### Privacy
 - Serial numbers, UUIDs, and MAC addresses never appear in logs above DEBUG.

@@ -95,3 +95,46 @@ GObject signals and cached getters can't be used. Local dbusmock template:
 | `refresh_remote()` downloads metadata **in-process over HTTPS** (only `UpdateMetadata` goes to the daemon); only ENABLED+DOWNLOAD remotes are refreshable | upstream `fwupd-client.c`; ADR-0009 |
 | Device IDs are 40-char sha1 hex; libfwupd hard-asserts the format (`fwupd_device_id_is_valid`) — never invent IDs in tests | dbusmock template development |
 | No fwupd daemon (containers/CI) or AppArmor-denied bus → ProviderUnavailable(TOOL_MISSING, fwupd) | container validation |
+
+## storage_smart (`StorageSmartPkexec`) — implements StorageProvider
+
+Two surfaces in one provider: unprivileged `/sys/block` inventory (platform.files reads)
+and SMART health via `pkexec /usr/libexec/lapcare/lapcare-helper smart-report <name>`
+(ADR-0006; the ONLY privileged entry point in the application). The helper passes
+`smartctl --json --all` output through verbatim; this module is the one place that JSON
+schema is parsed. pkexec 126/127 → `PrivilegedActionDenied`; the helper's §13 stderr codes
+map to TOOL_MISSING(smartmontools) / ProviderTimeout / ProviderParseError.
+
+| Quirk | Evidence |
+|---|---|
+| Physical device = `/sys/block/<name>/` HAS a `device/` subdir; loop/zram/dm-* don't and are skipped | E16 + container probes |
+| **E16's SK hynix NVMe has no self-test log: smartctl exits with bit 2 set alongside complete, healthy JSON** — bit 2 is data quality, not failure (helper fatal bits are 0-1 only) | E16 real-NVMe capture, ADR-0006 §12 |
+| smartctl exit status is a bitmask; bits 3-7 (failing disk!) arrive WITH valid JSON — a failing disk is data | smartmontools docs + ADR-0006 |
+| `serial_number` in smartctl JSON is an identifier: own model field, never logged above DEBUG, excluded from exports by default | ADR-0006 §17 |
+| NVMe SMART needs CAP_SYS_ADMIN, not just device-node access — smartctl in a container with `--device` alone gets `NVME_IOCTL_ADMIN_CMD: Permission denied` (bit 2, partial JSON) | container probe, 2026-07 |
+| The pkexec timeout must contain a human typing a password: 120 s client-side; the helper's own smartctl timeout is 25 s | ADR-0006 §10/§15 |
+| SATA `device/model` is 16 chars space-padded (read_str strips); NVMe exposes model on the controller device the `device/` symlink reaches | kernel sysfs ABI |
+
+## hwmon (`HwmonSysfs`) — implements ThermalProvider
+
+Reads `/sys/class/hwmon/hwmon*/{name,temp*_input,temp*_label}`; millidegrees → °C.
+Returns what the kernel returns — plausibility (the E16's bogus slots below) is the
+diagnostics engine's policy (`core.diagnostics.PLAUSIBLE_*`), never a parse decision.
+
+| Quirk | Evidence |
+|---|---|
+| **ThinkPad EC exposes 8 temp slots regardless of population: unpopulated ones read 2 °C / 12-13 °C or fail the read outright** (temp8 on the E16) — judge on plausible maxima, never raw readings | E16 live capture, 2026-07 |
+| Slot numbering is non-contiguous (E16 coretemp: temp1, then temp10, temp14…) | E16 live capture |
+| Unlabeled sensors are normal (acpitz, most EC slots) — label is Optional | E16 live capture |
+
+## disk_usage (`DiskUsageStatvfs`) — implements DiskUsageProvider
+
+Parses `/proc/mounts`, keeps mounts whose source starts with `/dev/` (the one-line rule
+that excludes proc/sys/tmpfs/overlay without a fstype blocklist), dedupes by source
+device, and calls `statvfs` per mountpoint (injectable for tests).
+
+| Quirk | Evidence |
+|---|---|
+| Mountpoints escape space/tab/newline as octal (`\040`) in /proc/mounts — decode before statvfs | /proc/mounts format spec |
+| Same source mounted many times (btrfs subvolumes, bind mounts) must count once | synthetic-mounts fixture |
+| `f_bavail` (unprivileged-available), not `f_bfree` — matches what file managers report | provider |
