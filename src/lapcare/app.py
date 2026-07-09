@@ -86,6 +86,12 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 application_id=APP_ID,
                 flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
             )
+            # Keyboard access (ROADMAP M5): standard GNOME app shortcuts.
+            quit_action = Gio.SimpleAction.new("quit", None)
+            quit_action.connect("activate", lambda *_a: self.quit())
+            self.add_action(quit_action)
+            self.set_accels_for_action("app.quit", ["<Control>q"])
+            self.set_accels_for_action("window.close", ["<Control>w"])
 
         def do_activate(self) -> None:
             window = self.props.active_window
