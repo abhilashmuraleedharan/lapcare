@@ -13,6 +13,8 @@ below, which the Dashboard's health card reuses.
 
 from __future__ import annotations
 
+import contextlib
+import datetime
 import logging
 import time
 from dataclasses import dataclass, field
@@ -21,8 +23,17 @@ from typing import TYPE_CHECKING
 
 from gi.repository import GObject
 
+from lapcare import __version__
 from lapcare.core import diagnostics
-from lapcare.core.models import CheckStatus, Confidence, DiagnosticsReport
+from lapcare.core import report as core_report
+from lapcare.core.errors import LapcareError
+from lapcare.core.models import (
+    CheckStatus,
+    Confidence,
+    DiagnosticsReport,
+    OsInfo,
+    SystemIdentity,
+)
 from lapcare.ui.pages.base_view_model import PageViewModel
 
 if TYPE_CHECKING:
@@ -30,8 +41,11 @@ if TYPE_CHECKING:
         BatteryWearProvider,
         DiskUsageProvider,
         FirmwareProvider,
+        OsInfoProvider,
+        ReportWriter,
         Scheduler,
         StorageProvider,
+        SystemIdentityProvider,
         ThermalProvider,
     )
 
@@ -133,6 +147,27 @@ def result_cards(report: DiagnosticsReport) -> list[CheckCard]:
     return cards
 
 
+def _system_rows(identity: SystemIdentity | None, os_info: OsInfo | None) -> list[tuple[str, str]]:
+    rows: list[tuple[str, str]] = []
+    if identity is not None:
+        for label, value in (
+            (_("Model"), identity.product_family),
+            (_("Machine type"), identity.product_name),
+            (_("Vendor"), identity.vendor),
+            (_("BIOS / UEFI"), identity.bios_version),
+        ):
+            if value:
+                rows.append((label, value.strip()))
+    if os_info is not None:
+        for label, value in (
+            (_("Operating system"), os_info.distro_name),
+            (_("Kernel"), os_info.kernel),
+        ):
+            if value:
+                rows.append((label, value))
+    return rows
+
+
 def score_texts(report: DiagnosticsReport) -> tuple[str, str]:
     """(headline, coverage) for a score display — shared with the Dashboard."""
     headline = _("%d / 100") % report.score if report.score is not None else _("No score")
@@ -149,6 +184,7 @@ class DiagnosticsViewModel(PageViewModel):
     busy_text = GObject.Property(type=str, default="")
     score_text = GObject.Property(type=str, default="")
     coverage_text = GObject.Property(type=str, default="")
+    toast_text = GObject.Property(type=str, default="")
 
     def __init__(
         self,
@@ -159,6 +195,9 @@ class DiagnosticsViewModel(PageViewModel):
         firmware: FirmwareProvider,
         thermal: ThermalProvider,
         disk: DiskUsageProvider,
+        identity: SystemIdentityProvider | None = None,
+        os_info: OsInfoProvider | None = None,
+        writer: ReportWriter | None = None,
     ) -> None:
         super().__init__()
         self._scheduler = scheduler
@@ -167,7 +206,15 @@ class DiagnosticsViewModel(PageViewModel):
         self._firmware = firmware
         self._thermal = thermal
         self._disk = disk
+        self._identity = identity
+        self._os_info = os_info
+        self._writer = writer
+        self._last_report: DiagnosticsReport | None = None
         self.cards: list[CheckCard] = []
+
+    @property
+    def can_export(self) -> bool:
+        return self._writer is not None and self._last_report is not None
 
     def load(self) -> None:
         # No core data to fetch: the page opens ready, awaiting a run.
@@ -197,6 +244,7 @@ class DiagnosticsViewModel(PageViewModel):
     def _run_done(self, outcome: tuple[DiagnosticsReport, float]) -> None:
         report, elapsed = outcome
         self.props.busy_text = ""
+        self._last_report = report
         self.cards = result_cards(report)
         headline, coverage = score_texts(report)
         self.props.score_text = headline
@@ -217,3 +265,65 @@ class DiagnosticsViewModel(PageViewModel):
         self.props.busy_text = ""
         log.warning("diagnostics run failed: %s", exc)
         self.handle_error(exc)
+
+    # -- report export (redacted by default — core/report.py) -----------------
+
+    def export(self, path: str) -> None:
+        """Write the last run's report to ``path``; the extension picks the
+        format (.json machine-readable, .html, anything else Markdown)."""
+        if not self.can_export or self.props.busy_text:
+            return
+        self.props.busy_text = _("Exporting report…")
+        self._scheduler.submit(self._render_and_write(path), self._export_done, self._export_failed)
+
+    async def _render_and_write(self, path: str) -> str:
+        assert self._last_report is not None and self._writer is not None
+        identity: SystemIdentity | None = None
+        os_info: OsInfo | None = None
+        # A report without system context is still a report.
+        if self._identity is not None:
+            with contextlib.suppress(LapcareError):
+                identity = await self._identity.read_identity()
+        if self._os_info is not None:
+            with contextlib.suppress(LapcareError):
+                os_info = await self._os_info.read_os()
+        generated = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M UTC")
+
+        if path.endswith(".json"):
+            content = core_report.to_json(
+                generated=generated,
+                app_version=__version__,
+                identity=identity,
+                os_info=os_info,
+                diagnostics=self._last_report,
+            )
+        else:
+            # Deferred import: keeps the renderers out of every page load.
+            from lapcare.ui.pages.diagnostics import report_render
+
+            system_rows = _system_rows(identity, os_info)
+            render = (
+                report_render.render_html
+                if path.endswith(".html")
+                else report_render.render_markdown
+            )
+            content = render(
+                generated=generated,
+                app_version=__version__,
+                system_rows=system_rows,
+                score_text=self.props.score_text,
+                coverage_text=self.props.coverage_text,
+                cards=self.cards,
+            )
+        self._writer.write(path, content)
+        return path
+
+    def _export_done(self, path: str) -> None:
+        self.props.busy_text = ""
+        log.debug("report exported")  # never log the path (may name the user)
+        self.props.toast_text = _("Report exported.")
+
+    def _export_failed(self, exc: BaseException) -> None:
+        self.props.busy_text = ""
+        log.warning("report export failed: %s", type(exc).__name__)
+        self.props.toast_text = _("Could not export the report.")

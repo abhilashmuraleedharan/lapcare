@@ -60,8 +60,15 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       statuses, skip codes, confidence) mapped in the diagnostics VM and reused by the
       Dashboard's experimental health card, which measures unprivileged signals only and
       hides itself when nothing is measurable.
-- [ ] C7 `feat: report export (MD/HTML/JSON)` — redacted by default; identifiers only on
-      explicit opt-in; `ReportWriter` in platform; export action on the Diagnostics page.
+- [x] C7 `feat: report export (MD/HTML/JSON)` — Export on the Diagnostics page after a
+      run; extension picks the format. JSON is machine-readable (raw ids/enums, stable
+      schema v1, rendered in core); MD/HTML are presentation documents built from the same
+      translated display data as the page (UI layer). Redaction **by construction**: no
+      serial key exists in any renderer's input, asserted across all three formats.
+      **Scope note:** the "include identifiers" opt-in is deferred with the `dmi-full`
+      verb — unprivileged Lapcare cannot read the DMI serial, so the toggle would be a
+      lie today (recorded in core/report.py). `ReportWriter` port + atomic platform
+      writer (temp file + rename). Export failure = toast, never a page state.
 - [ ] C8 `docs: module docs + adding-a-diagnostic guide` — providers.md sections
       (storage_smart, hwmon, disk_usage), `docs/guides/adding-a-diagnostic.md` (promised by
       AGENTS.md routing table since M0), security-design.md pointer to ADR-0006.

@@ -13,7 +13,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gio, GLib, Gtk
 
 from lapcare.ui.pages.diagnostics.view_model import CheckCard, DiagnosticsViewModel
 
@@ -26,6 +26,7 @@ RESOURCE = "/io/github/abhilashmuraleedharan/lapcare/ui/pages/diagnostics/page.u
 class DiagnosticsPage(Adw.Bin):
     __gtype_name__ = "LapcareDiagnosticsPage"
 
+    toast_overlay = Gtk.Template.Child()
     busy_banner = Gtk.Template.Child()
     stack = Gtk.Template.Child()
     results_container = Gtk.Template.Child()
@@ -37,7 +38,14 @@ class DiagnosticsPage(Adw.Bin):
         self._vm = view_model
         self._vm.connect("notify::state", self._on_state_changed)
         self._vm.connect("notify::busy-text", self._on_busy_changed)
+        self._vm.connect("notify::toast-text", self._on_toast)
         self._vm.load()
+
+    def _on_toast(self, _vm, _pspec) -> None:
+        text = self._vm.props.toast_text
+        if text:
+            self.toast_overlay.add_toast(Adw.Toast(title=text))
+            self._vm.props.toast_text = ""  # re-arm ("" notify is ignored here)
 
     def _on_state_changed(self, _vm, _pspec) -> None:
         state = self._vm.props.state
@@ -67,6 +75,30 @@ class DiagnosticsPage(Adw.Bin):
         )
         button.connect("clicked", lambda *_a: self._vm.run())
         return button
+
+    def _on_export_clicked(self, _button) -> None:
+        dialog = Gtk.FileDialog(initial_name=_("lapcare-report.md"))
+        filters = Gio.ListStore.new(Gtk.FileFilter)
+        for name, pattern in (
+            (_("Markdown"), "*.md"),
+            (_("HTML"), "*.html"),
+            (_("JSON"), "*.json"),
+        ):
+            file_filter = Gtk.FileFilter()
+            file_filter.set_name(name)
+            file_filter.add_pattern(pattern)
+            filters.append(file_filter)
+        dialog.set_filters(filters)
+        dialog.save(self.get_root(), None, self._on_export_chosen)
+
+    def _on_export_chosen(self, dialog: Gtk.FileDialog, result) -> None:
+        try:
+            file = dialog.save_finish(result)
+        except GLib.Error:  # dismissed — a legitimate choice, no toast
+            return
+        path = file.get_path()
+        if path:
+            self._vm.export(path)
 
     def _check_row(self, card: CheckCard) -> Gtk.Widget:
         if not card.evidence:
@@ -109,7 +141,19 @@ class DiagnosticsPage(Adw.Bin):
             return
 
         score = Adw.PreferencesGroup(title=_("Health Score"))
-        score.set_header_suffix(self._run_button(_("Run Again")))
+        actions = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
+        if self._vm.can_export:
+            export = Gtk.Button()
+            export.set_child(
+                Adw.ButtonContent(label=_("Export…"), icon_name="document-save-symbolic")
+            )
+            export.set_tooltip_text(
+                _("Save this report as Markdown, HTML, or JSON. Identifiers are excluded.")
+            )
+            export.connect("clicked", self._on_export_clicked)
+            actions.append(export)
+        actions.append(self._run_button(_("Run Again")))
+        score.set_header_suffix(actions)
         score_row = Adw.ActionRow(
             title=self._vm.props.score_text, subtitle=self._vm.props.coverage_text
         )
