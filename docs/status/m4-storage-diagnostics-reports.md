@@ -53,9 +53,13 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       (E16 capture: EC exposes unpopulated slots reading 2 °C/13 °C or failing outright —
       plausibility bounds live in the engine, not the parser) and `disk_usage`
       (/proc/mounts `/dev/*` filter, dedupe by source, `f_bavail`, octal-escape decode).
-- [ ] C6 `feat(ui): Diagnostics page + Dashboard health score` — one-click run (< 10 s),
-      per-signal confidence, health score card on Dashboard labeled experimental,
-      unmeasured signals are honest (SMART unmeasured until authorized).
+- [x] C6 `feat(ui): Diagnostics page + Dashboard health score` — page opens ready (zero
+      prompts at launch); one privilege-marked Run includes SMART, logs elapsed time
+      (greppable for the < 10 s criterion); declined auth = that one signal "Not measured
+      (authorization declined)", run survives; all prose (check titles, metric labels,
+      statuses, skip codes, confidence) mapped in the diagnostics VM and reused by the
+      Dashboard's experimental health card, which measures unprivileged signals only and
+      hides itself when nothing is measurable.
 - [ ] C7 `feat: report export (MD/HTML/JSON)` — redacted by default; identifiers only on
       explicit opt-in; `ReportWriter` in platform; export action on the Diagnostics page.
 - [ ] C8 `docs: module docs + adding-a-diagnostic guide` — providers.md sections

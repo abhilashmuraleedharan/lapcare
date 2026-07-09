@@ -125,3 +125,31 @@ def test_format_uptime() -> None:
     assert format_uptime(59) == "0m"
     assert format_uptime(3 * 3600 + 5 * 60) == "3h 5m"
     assert format_uptime(2 * 86400 + 3600) == "2d 1h 0m"
+
+
+def test_health_score_card_from_unprivileged_signals() -> None:
+    from .test_diagnostics_view_model import FakeDisk, FakeFirmware, FakeThermal
+
+    vm = _e16_view_model()  # no health providers: card stays hidden
+    vm.load()
+    assert vm.props.health_score == ""
+
+    dmi = DmiSysfs(root=fixture_root("dmi", "thinkpad-e16-gen2"))
+    vm = DashboardViewModel(
+        ImmediateScheduler(),
+        identity=dmi,
+        os_info=OsInfoProc(root=fixture_root("os_info", "synthetic-full")),
+        thinkpad=ThinkpadAcpiSysfs(
+            root=fixture_root("thinkpad_acpi", "thinkpad-e16-gen2"), identity=dmi
+        ),
+        firmware=FakeFirmware([]),
+        thermal=FakeThermal(),
+        disk=FakeDisk(),
+    )
+    vm.load()
+    assert vm.props.state == "ready"
+    assert vm.props.health_score == "100 / 100"
+    # Storage SMART is never read from the Dashboard (zero prompts): it
+    # counts as unmeasured coverage. Battery provider absent here too.
+    assert "3 of 5" in vm.props.health_coverage
+    assert "Experimental" in vm.props.health_coverage

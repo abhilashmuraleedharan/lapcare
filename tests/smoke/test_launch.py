@@ -68,3 +68,8 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     # one physical disk reaches ready, an all-virtual environment logs the
     # zero-devices unavailable state. Health is never read at launch.
     assert "storage ready" in output or "storage unavailable" in output, output
+    # Diagnostics opens ready without running anything (no prompts at launch).
+    assert "diagnostics ready (idle)" in output, output
+    # Dashboard health score: computed from unprivileged signals only; a
+    # container with thermal+disk visible always measures something.
+    assert "health score=" in output or "health score unavailable" in output, output

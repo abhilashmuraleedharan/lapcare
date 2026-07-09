@@ -104,6 +104,14 @@ py.install_sources(
 )
 py.install_sources(
   [
+    'lapcare/ui/pages/diagnostics/__init__.py',
+    'lapcare/ui/pages/diagnostics/view.py',
+    'lapcare/ui/pages/diagnostics/view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages/diagnostics',
+)
+py.install_sources(
+  [
     'lapcare/ui/pages/storage/__init__.py',
     'lapcare/ui/pages/storage/view.py',
     'lapcare/ui/pages/storage/view_model.py',
@@ -126,6 +134,7 @@ blueprints = custom_target('blueprints',
   input: files(
     'lapcare/ui/window.blp',
     'lapcare/ui/pages/battery/page.blp',
+    'lapcare/ui/pages/diagnostics/page.blp',
     'lapcare/ui/pages/dashboard/page.blp',
     'lapcare/ui/pages/firmware/page.blp',
     'lapcare/ui/pages/hardware/page.blp',

@@ -28,6 +28,8 @@ class DashboardPage(Adw.Bin):
     stack = Gtk.Template.Child()
     unavailable_status = Gtk.Template.Child()
     error_status = Gtk.Template.Child()
+    health_group = Gtk.Template.Child()
+    row_health = Gtk.Template.Child()
     row_model = Gtk.Template.Child()
     row_machine_type = Gtk.Template.Child()
     row_vendor = Gtk.Template.Child()
@@ -40,7 +42,16 @@ class DashboardPage(Adw.Bin):
         super().__init__(**kwargs)
         self._vm = view_model
         self._vm.connect("notify::state", self._on_state_changed)
+        self._vm.connect("notify::health-score", self._on_health_changed)
         self._vm.load()
+
+    def _on_health_changed(self, _vm, _pspec) -> None:
+        # Arrives independently of the identity rows (separate submit).
+        score = self._vm.props.health_score
+        if score:
+            self.row_health.set_title(score)
+            self.row_health.set_subtitle(self._vm.props.health_coverage)
+            self.health_group.set_visible(True)
 
     def _on_state_changed(self, _vm, _pspec) -> None:
         state = self._vm.props.state
