@@ -101,6 +101,14 @@ py.install_sources(
 )
 py.install_sources(
   [
+    'lapcare/ui/pages/storage/__init__.py',
+    'lapcare/ui/pages/storage/view.py',
+    'lapcare/ui/pages/storage/view_model.py',
+  ],
+  subdir: 'lapcare/ui/pages/storage',
+)
+py.install_sources(
+  [
     'lapcare/ui/pages/placeholder/__init__.py',
     'lapcare/ui/pages/placeholder/view.py',
     'lapcare/ui/pages/placeholder/view_model.py',
@@ -119,6 +127,7 @@ blueprints = custom_target('blueprints',
     'lapcare/ui/pages/firmware/page.blp',
     'lapcare/ui/pages/hardware/page.blp',
     'lapcare/ui/pages/placeholder/page.blp',
+    'lapcare/ui/pages/storage/page.blp',
   ),
   output: '.',
   command: [blueprint_compiler, 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],

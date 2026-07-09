@@ -64,3 +64,7 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     # Firmware: real machines reach ready; containers/CI have no fwupd
     # daemon (or a daemon reporting zero devices) — both log "unavailable".
     assert "firmware ready" in output or "firmware unavailable" in output, output
+    # Storage: /sys/block always exists on Linux; a machine/VM with at least
+    # one physical disk reaches ready, an all-virtual environment logs the
+    # zero-devices unavailable state. Health is never read at launch.
+    assert "storage ready" in output or "storage unavailable" in output, output
