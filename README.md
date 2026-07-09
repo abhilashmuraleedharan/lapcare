@@ -62,6 +62,8 @@ LVFS signature verification.
 | `CONTRIBUTING.md` | How to contribute (humans and AI agents) |
 | `AGENTS.md` | Entry point for AI coding agents |
 | `DECISIONS.md` | Index of architecture decision records |
+| `docs/user-guide.md` | Using Lapcare: pages, prompts, privacy, troubleshooting |
+| `docs/packaging.md` | What distribution packagers need |
 
 ## Installing the beta
 
