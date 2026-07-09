@@ -101,3 +101,42 @@ jobs:
           name: lapcare-deb-ubuntu-${{ matrix.lts }}
           path: dist-deb/*.deb
           retention-days: 30
+
+  # PPA source packages (docs/release.md "PPA runbook"): built on tags only,
+  # UNSIGNED — signing stays on the maintainer's machine with their GPG key
+  # (supply-chain: CI never holds signing keys). One builder series suffices;
+  # only the changelog stanza differs per target series.
+  ppa-lane:
+    name: ppa-lane (source packages)
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build per-series source packages
+        run: |
+          export DEBIAN_FRONTEND=noninteractive DEBEMAIL="amuraleedharan13@gmail.com" \
+            DEBFULLNAME="Abhilash Muraleedharan"
+          apt-get update
+          apt-get install -y --no-install-recommends devscripts debhelper dpkg-dev
+          VERSION=$(sed -n "s/^  version: '\(.*\)',$/\1/p" meson.build)
+          for series in noble resolute; do
+            git config --global --add safe.directory "$PWD" || true
+            cp -a . /tmp/lapcare-$series && cd /tmp/lapcare-$series
+            rm -rf .git dist-ppa
+            dch -v "${VERSION}+ppa1~${series}1" -D "$series" \
+              --force-distribution "PPA upload for ${series}."
+            dpkg-buildpackage -S -us -uc -d
+            mkdir -p "$GITHUB_WORKSPACE/dist-ppa/$series"
+            mv /tmp/lapcare_* "$GITHUB_WORKSPACE/dist-ppa/$series/"
+            cd "$GITHUB_WORKSPACE"
+          done
+
+      - name: Upload source-package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lapcare-ppa-source
+          path: dist-ppa/
+          retention-days: 30
