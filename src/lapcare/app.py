@@ -54,8 +54,10 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     # composition root is the one module that sees concrete classes.
     from lapcare.platform.history import SqliteHistoryStore
     from lapcare.providers.battery_sysfs import BatterySysfs
+    from lapcare.providers.disk_usage import DiskUsageStatvfs
     from lapcare.providers.dmi import DmiSysfs
     from lapcare.providers.fwupd import FwupdGir
+    from lapcare.providers.hwmon import HwmonSysfs
     from lapcare.providers.os_info import OsInfoProc
     from lapcare.providers.pci_usb import PciUsbTools
     from lapcare.providers.storage_smart import StorageSmartPkexec
@@ -65,6 +67,8 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
     from lapcare.ui.pages.battery.view_model import BatteryViewModel
     from lapcare.ui.pages.dashboard.view import DashboardPage
     from lapcare.ui.pages.dashboard.view_model import DashboardViewModel
+    from lapcare.ui.pages.diagnostics.view import DiagnosticsPage
+    from lapcare.ui.pages.diagnostics.view_model import DiagnosticsViewModel
     from lapcare.ui.pages.firmware.view import FirmwarePage
     from lapcare.ui.pages.firmware.view_model import FirmwareViewModel
     from lapcare.ui.pages.hardware.view import HardwarePage
@@ -89,27 +93,48 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 os_info = OsInfoProc()
                 thinkpad = ThinkpadAcpiSysfs(identity=dmi)
                 inventory = PciUsbTools()
+                battery_wear = BatterySysfs()
+                firmware = FwupdGir()
+                storage = StorageSmartPkexec()
+                thermal = HwmonSysfs()
+                disk = DiskUsageStatvfs()
 
                 dashboard_vm = DashboardViewModel(
-                    scheduler, identity=dmi, os_info=os_info, thinkpad=thinkpad
+                    scheduler,
+                    identity=dmi,
+                    os_info=os_info,
+                    thinkpad=thinkpad,
+                    battery_wear=battery_wear,
+                    firmware=firmware,
+                    thermal=thermal,
+                    disk=disk,
                 )
                 hardware_vm = HardwareViewModel(
                     scheduler, identity=dmi, os_info=os_info, inventory=inventory
                 )
                 battery_vm = BatteryViewModel(
                     scheduler,
-                    wear=BatterySysfs(),
+                    wear=battery_wear,
                     status=UPowerDbus(),
                     history=SqliteHistoryStore(),
                 )
-                firmware_vm = FirmwareViewModel(scheduler, firmware=FwupdGir())
-                storage_vm = StorageViewModel(scheduler, storage=StorageSmartPkexec())
+                firmware_vm = FirmwareViewModel(scheduler, firmware=firmware)
+                storage_vm = StorageViewModel(scheduler, storage=storage)
+                diagnostics_vm = DiagnosticsViewModel(
+                    scheduler,
+                    battery_wear=battery_wear,
+                    storage=storage,
+                    firmware=firmware,
+                    thermal=thermal,
+                    disk=disk,
+                )
                 pages = [
                     ("dashboard", _("Dashboard"), DashboardPage(dashboard_vm)),
                     ("battery", _("Battery"), BatteryPage(battery_vm)),
                     ("hardware", _("Hardware"), HardwarePage(hardware_vm)),
                     ("firmware", _("Firmware"), FirmwarePage(firmware_vm)),
                     ("storage", _("Storage"), StoragePage(storage_vm)),
+                    ("diagnostics", _("Diagnostics"), DiagnosticsPage(diagnostics_vm)),
                     ("reference", _("Reference"), PlaceholderPage(PlaceholderViewModel())),
                 ]
                 window = MainWindow(application=self, pages=pages)

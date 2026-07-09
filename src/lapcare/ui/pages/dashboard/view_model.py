@@ -14,14 +14,20 @@ from typing import TYPE_CHECKING
 
 from gi.repository import GObject
 
-from lapcare.core.models import OsInfo, SystemIdentity, ThinkpadInfo
+from lapcare.core import diagnostics
+from lapcare.core.models import DiagnosticsReport, OsInfo, SystemIdentity, ThinkpadInfo
 from lapcare.ui.pages.base_view_model import PageViewModel
+from lapcare.ui.pages.diagnostics.view_model import score_texts
 
 if TYPE_CHECKING:
     from lapcare.core.ports import (
+        BatteryWearProvider,
+        DiskUsageProvider,
+        FirmwareProvider,
         OsInfoProvider,
         Scheduler,
         SystemIdentityProvider,
+        ThermalProvider,
         ThinkpadProvider,
     )
 
@@ -54,6 +60,8 @@ class DashboardViewModel(PageViewModel):
     kernel = GObject.Property(type=str, default=PLACEHOLDER)
     uptime = GObject.Property(type=str, default=PLACEHOLDER)
     is_thinkpad = GObject.Property(type=bool, default=True)  # banner hidden until known
+    health_score = GObject.Property(type=str, default="")  # "" = no score card yet
+    health_coverage = GObject.Property(type=str, default="")
 
     def __init__(
         self,
@@ -61,16 +69,54 @@ class DashboardViewModel(PageViewModel):
         identity: SystemIdentityProvider,
         os_info: OsInfoProvider,
         thinkpad: ThinkpadProvider,
+        *,
+        battery_wear: BatteryWearProvider | None = None,
+        firmware: FirmwareProvider | None = None,
+        thermal: ThermalProvider | None = None,
+        disk: DiskUsageProvider | None = None,
     ) -> None:
         super().__init__()
         self._scheduler = scheduler
         self._identity = identity
         self._os_info = os_info
         self._thinkpad = thinkpad
+        self._battery_wear = battery_wear
+        self._firmware = firmware
+        self._thermal = thermal
+        self._disk = disk
 
     def load(self) -> None:
         self.show_loading()
         self._scheduler.submit(self._gather(), self._apply, self.handle_error)
+        # The health score loads independently so a slow signal source never
+        # delays the identity rows. Unprivileged only: storage SMART is never
+        # read from the Dashboard (zero prompts here — ADR-0004); its signal
+        # counts as unmeasured coverage instead.
+        self._scheduler.submit(
+            diagnostics.run(
+                battery_wear=self._battery_wear,
+                storage=None,
+                firmware=self._firmware,
+                thermal=self._thermal,
+                disk=self._disk,
+            ),
+            self._apply_health,
+            self._health_failed,
+        )
+
+    def _apply_health(self, report: DiagnosticsReport) -> None:
+        if report.score is None:
+            # Nothing measurable: no card beats a card that says nothing.
+            log.debug("health score unavailable: no signal measured")
+            return
+        headline, coverage = score_texts(report)
+        self.props.health_coverage = coverage
+        self.props.health_score = headline
+        log.debug("health score=%s measured=%d/%d", report.score, report.measured, report.total)
+
+    def _health_failed(self, exc: BaseException) -> None:
+        # The score is a bonus card: without it the dashboard is still whole.
+        log.debug("health score unavailable: %s", exc)
 
     async def _gather(self) -> tuple[SystemIdentity, OsInfo, ThinkpadInfo]:
         return (

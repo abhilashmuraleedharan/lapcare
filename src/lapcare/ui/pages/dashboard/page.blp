@@ -46,6 +46,20 @@ template $LapcareDashboardPage: Adw.Bin {
           name: "ready";
 
           child: Adw.PreferencesPage {
+            Adw.PreferencesGroup health_group {
+              title: _("Health");
+              description: _("Experimental");
+              visible: false;
+
+              Adw.ActionRow row_health {
+                title: _("Health Score");
+
+                styles [
+                  "property",
+                ]
+              }
+            }
+
             Adw.PreferencesGroup {
               title: _("System");
 
