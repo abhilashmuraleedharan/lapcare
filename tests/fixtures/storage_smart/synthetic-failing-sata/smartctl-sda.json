@@ -1,0 +1,63 @@
+{
+  "json_format_version": [1, 0],
+  "smartctl": {
+    "version": [7, 4],
+    "exit_status": 200,
+    "messages": []
+  },
+  "device": {
+    "name": "/dev/sda",
+    "info_name": "/dev/sda [SAT]",
+    "type": "sat",
+    "protocol": "ATA"
+  },
+  "model_name": "SYNTH SSD 512GB",
+  "serial_number": "SYNTHETIC000000",
+  "firmware_version": "1B2QEXP7",
+  "user_capacity": {
+    "blocks": 1000215216,
+    "bytes": 512110190592
+  },
+  "smart_status": {
+    "passed": false
+  },
+  "power_on_time": {
+    "hours": 30217
+  },
+  "power_cycle_count": 4123,
+  "temperature": {
+    "current": 51
+  },
+  "ata_smart_attributes": {
+    "revision": 1,
+    "table": [
+      {
+        "id": 5,
+        "name": "Reallocated_Sector_Ct",
+        "value": 62,
+        "worst": 62,
+        "thresh": 10,
+        "when_failed": "",
+        "raw": {"value": 1264, "string": "1264"}
+      },
+      {
+        "id": 194,
+        "name": "Temperature_Celsius",
+        "value": 49,
+        "worst": 31,
+        "thresh": 0,
+        "when_failed": "",
+        "raw": {"value": 51, "string": "51"}
+      },
+      {
+        "id": 197,
+        "name": "Current_Pending_Sector",
+        "value": 90,
+        "worst": 90,
+        "thresh": 0,
+        "when_failed": "now",
+        "raw": {"value": 88, "string": "88"}
+      }
+    ]
+  }
+}

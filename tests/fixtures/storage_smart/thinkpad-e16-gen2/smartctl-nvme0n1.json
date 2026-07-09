@@ -1,0 +1,125 @@
+{
+  "json_format_version": [
+    1,
+    0
+  ],
+  "smartctl": {
+    "version": [
+      7,
+      4
+    ],
+    "pre_release": false,
+    "svn_revision": "5530",
+    "platform_info": "x86_64-linux-6.8.0-124-generic",
+    "build_info": "(local build)",
+    "argv": [
+      "smartctl",
+      "--json",
+      "--all",
+      "/dev/nvme0n1"
+    ],
+    "messages": [
+      {
+        "string": "Read Self-test Log failed: Invalid Field in Command (0x002)",
+        "severity": "error"
+      }
+    ],
+    "exit_status": 4
+  },
+  "local_time": {
+    "time_t": 1783604578,
+    "asctime": "Thu Jul  9 13:42:58 2026 UTC"
+  },
+  "device": {
+    "name": "/dev/nvme0n1",
+    "info_name": "/dev/nvme0n1",
+    "type": "nvme",
+    "protocol": "NVMe"
+  },
+  "model_name": "SKHynix_HFS512GEM4X169N",
+  "serial_number": "REDACTED0000000000",
+  "firmware_version": "61700A30",
+  "nvme_pci_vendor": {
+    "id": 7260,
+    "subsystem_id": 7260
+  },
+  "nvme_ieee_oui_identifier": 11330606,
+  "nvme_controller_id": 1,
+  "nvme_version": {
+    "string": "2.0",
+    "value": 131072
+  },
+  "nvme_number_of_namespaces": 1,
+  "nvme_namespaces": [
+    {
+      "id": 1,
+      "size": {
+        "blocks": 1000215216,
+        "bytes": 512110190592
+      },
+      "capacity": {
+        "blocks": 1000215216,
+        "bytes": 512110190592
+      },
+      "utilization": {
+        "blocks": 1000215216,
+        "bytes": 512110190592
+      },
+      "formatted_lba_size": 512,
+      "eui64": {
+        "oui": 0,
+        "ext_id": 0
+      }
+    }
+  ],
+  "user_capacity": {
+    "blocks": 1000215216,
+    "bytes": 512110190592
+  },
+  "logical_block_size": 512,
+  "smart_support": {
+    "available": true,
+    "enabled": true
+  },
+  "smart_status": {
+    "passed": true,
+    "nvme": {
+      "value": 0
+    }
+  },
+  "nvme_smart_health_information_log": {
+    "critical_warning": 0,
+    "temperature": 43,
+    "available_spare": 100,
+    "available_spare_threshold": 10,
+    "percentage_used": 2,
+    "data_units_read": 22467899,
+    "data_units_written": 20022488,
+    "host_reads": 459854538,
+    "host_writes": 409635398,
+    "controller_busy_time": 13132,
+    "power_cycles": 608,
+    "power_on_hours": 278,
+    "unsafe_shutdowns": 107,
+    "media_errors": 0,
+    "num_err_log_entries": 0,
+    "warning_temp_time": 0,
+    "critical_comp_time": 0,
+    "temperature_sensors": [
+      47,
+      43
+    ]
+  },
+  "temperature": {
+    "current": 43
+  },
+  "power_cycle_count": 608,
+  "power_on_time": {
+    "hours": 278
+  },
+  "nvme_error_information_log": {
+    "size": 256,
+    "read": 16,
+    "unread": 0
+  }
+}

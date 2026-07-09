@@ -34,10 +34,14 @@ polkit `src/programs/pkexec.c` as shipped on both target LTS releases (pkexec 12
   `PYTHONPATH`, `LD_PRELOAD`, `DBUS_*` etc. can never reach the helper — but the helper does
   not *rely* on this (defense in depth below).
 - `smartctl --json` (smartmontools ≥ 7.0; 7.4/7.5 on our LTS targets) reports SATA **and**
-  NVMe health in one JSON schema. Its exit status is a bitmask: bits 0–2 (usage error,
-  device open failed, SMART command failed) are hard failures; bits 3–7 (disk failing,
-  attributes below threshold, error-log entries…) are *findings* delivered alongside valid
-  JSON — a failing disk exits non-zero with perfectly good data.
+  NVMe health in one JSON schema. Its exit status is a bitmask: bit 0 (usage error) and
+  bit 1 (device open failed) mean there is no report; bits 3–7 (disk failing, attributes
+  below threshold, error-log entries…) are *findings* delivered alongside valid JSON — a
+  failing disk exits non-zero with perfectly good data. **Bit 2 ("a SMART command
+  failed") also coexists with complete, healthy JSON** — measured on the E16 Gen 2's SK
+  hynix NVMe, which lacks the optional self-test log, so every `--all` read sets bit 2
+  while the full health section is present. Bit 2 is therefore *data quality*, not
+  failure; the JSON gate below decides.
 - `pkexec` and `polkitd` are discrete packages on both LTS releases; `smartmontools` is in
   main on both.
 
@@ -116,9 +120,11 @@ asserts each one.
     the human typing a password; see Client contract.)
 11. **Bounded output:** stdout capped at 4 MiB read; larger output is an error, not a
     truncation (truncated JSON is worse than no JSON).
-12. **Exit-bitmask policy (verified above):** `smartctl` bits 0–2 → hard error
-    (`tool-failed`); bits 3–7 alone → success, pass the JSON through — a failing disk is
-    *data*. In all success paths the helper confirms stdout parses as JSON
+12. **Exit-bitmask policy (measured above):** `smartctl` bits 0–1 → hard error
+    (`tool-failed`); any other exit (bits 2–7 in any combination) → success provided the
+    JSON gate passes — a failing disk is *data*, and a partially-answering drive (bit 2,
+    e.g. no self-test log on the E16's own NVMe) is data with gaps that the provider maps
+    to Optional fields. In all success paths the helper confirms stdout parses as JSON
     (`json.loads`) before emitting it verbatim; it never interprets the contents further
     (parsing SMART semantics is the provider's job, per the one-parser-per-tool rule).
 13. **Error channel:** errors are one machine-readable line on stderr —

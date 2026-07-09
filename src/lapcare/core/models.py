@@ -174,3 +174,45 @@ class FirmwareRelease:
     description: str | None = None  # release notes; AppStream markup, rendered as-is
     size: int | None = None  # bytes, when fwupd reports it
     urgency: str | None = None  # e.g. "critical", "high", "medium", "low"
+
+
+@dataclass(frozen=True)
+class StorageDevice:
+    """One physical block device (storage_smart provider, unprivileged
+    /sys/block inventory — entries without a device/ subdirectory are
+    virtual: loop, zram, dm-*, and never listed)."""
+
+    name: str  # kernel name, e.g. "nvme0n1" — the helper's argument (ADR-0006)
+    model: str | None = None  # device/model; SATA pads to 16 chars, stripped
+    size_bytes: int | None = None  # size (512-byte sectors) * 512
+    removable: bool | None = None
+    rotational: bool | None = None  # False for SSD/NVMe
+
+
+@dataclass(frozen=True)
+class SmartReport:
+    """Parsed ``smartctl --json --all`` health for one device (storage_smart
+    provider, via the ADR-0006 privileged helper). Fields absent from a
+    drive's report are None — a partially-answering drive is data with gaps
+    (e.g. the E16 Gen 2's NVMe lacks the optional self-test log)."""
+
+    device_name: str
+    passed: bool | None = None  # smart_status.passed; None if unreported
+    temperature_c: int | None = None
+    power_on_hours: int | None = None
+    power_cycles: int | None = None
+    # NVMe (nvme_smart_health_information_log)
+    percentage_used: int | None = None  # wear estimate, 0-100+ (can exceed 100)
+    available_spare_pct: int | None = None
+    media_errors: int | None = None
+    critical_warning: int | None = None  # NVMe bitmask; 0 = none
+    unsafe_shutdowns: int | None = None
+    # SATA (ata_smart_attributes ids 5 / 197)
+    reallocated_sectors: int | None = None
+    pending_sectors: int | None = None
+    model: str | None = None
+    firmware_version: str | None = None
+    # Identifier (ADR-0006 §17): kept in its own field so redaction rules can
+    # target it — never logged above DEBUG, excluded from exports by default.
+    serial_number: str | None = None
+    messages: tuple[str, ...] = ()  # smartctl error/warning strings (data quality)

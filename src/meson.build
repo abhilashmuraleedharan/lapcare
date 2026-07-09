@@ -28,6 +28,7 @@ py.install_sources(
     'lapcare/providers/fwupd.py',
     'lapcare/providers/os_info.py',
     'lapcare/providers/pci_usb.py',
+    'lapcare/providers/storage_smart.py',
     'lapcare/providers/thinkpad_acpi.py',
     'lapcare/providers/upower.py',
   ],
