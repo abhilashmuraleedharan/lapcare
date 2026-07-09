@@ -2,11 +2,12 @@
 
 [![CI](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml/badge.svg)](https://github.com/abhilashmuraleedharan/lapcare/actions/workflows/ci.yml)
 
-> **Status: beta (v0.4.0).** Dashboard, Battery, Hardware, and Firmware pages are usable
-> today. Firmware installs delegate entirely to fwupd (its polkit prompt and LVFS signature
-> verification govern them); everything else is read-only. Field reports from real firmware
-> updates are what this beta needs — see [Planned features](#planned-features) and
-> `ROADMAP.md` for what's next.
+> **Status: beta (v0.5.0).** Every MVP feature is now in: Dashboard (with an experimental
+> health score), Battery, Hardware, Firmware, Storage, and Diagnostics with report export.
+> Firmware installs delegate entirely to fwupd; storage health reads go through a single
+> audited, read-only polkit helper — everything Lapcare itself does remains read-only.
+> Field reports from real hardware are what this beta needs — see `ROADMAP.md` for the
+> path to 1.0 (hardening, PPA, community hardware round).
 
 **Lapcare** is a native Linux desktop application that gives ThinkPad owners the system
 insight and hardware management they lost when they left Lenovo Vantage behind: hardware
@@ -23,21 +24,28 @@ rather than reinventing them.
 
 [fwupd]: https://fwupd.org
 
-## Available now (v0.4.0)
+## Available now (v0.5.0)
 
-- System overview: model, BIOS, OS, kernel, uptime, ThinkPad detection (Dashboard)
+- System overview: model, BIOS, OS, kernel, uptime, ThinkPad detection, and an
+  experimental health score with per-signal confidence (Dashboard)
 - Battery health: live charge status, wear analysis, health classification, cycle count,
   daily wear history with chart, dual-battery support (Battery)
 - Full hardware information: DMI identity, CPU/memory, PCI/USB inventory (Hardware)
 - Firmware updates via fwupd/LVFS: device list with available upgrades, metadata refresh,
   guided update flow — battery preconditions checked up front, progress, reboot handling
   (Firmware)
+- Storage health: disk inventory with SMART/NVMe verdicts, temperature, wear and
+  endurance data after a single administrator authorization (Storage)
+- One-click diagnostics — battery wear, storage, firmware currency, temperatures, disk
+  space — with explainable verdicts and report export to Markdown/HTML/JSON, serial
+  numbers excluded by default (Diagnostics)
 
 ## Planned features
 
-- Storage SMART/NVMe health — M4
-- One-click diagnostics with an explainable health dashboard — M4
-- Diagnostic report export (redacted by default) — M4
+- Hardening, performance, accessibility, PPA packaging, community hardware-test round — M5
+  (the 1.0 release)
+- Post-1.0: battery charge thresholds, thermal/fan monitoring, notifications — see
+  `ROADMAP.md`
 
 Every feature degrades gracefully on missing tools, unsupported hardware, or declined
 authorization. Lapcare itself never writes to your hardware: the one mutating feature,
@@ -58,11 +66,11 @@ LVFS signature verification.
 ## Installing the beta
 
 Download the `.deb` for your Ubuntu release from the
-[v0.4.0 release page](https://github.com/abhilashmuraleedharan/lapcare/releases/tag/v0.4.0)
+[v0.5.0 release page](https://github.com/abhilashmuraleedharan/lapcare/releases/tag/v0.5.0)
 and install it:
 
 ```sh
-sudo apt install ./lapcare_0.4.0_all-ubuntu-24.04.deb   # or -ubuntu-26.04.deb
+sudo apt install ./lapcare_0.5.0_all-ubuntu-24.04.deb   # or -ubuntu-26.04.deb
 ```
 
 A PPA is planned for the 1.0 release (see `docs/release.md`); until then, GitHub Releases

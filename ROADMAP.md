@@ -15,8 +15,8 @@ cycle of field testing before 1.0). `1.0` = MVP definition met, stable on two LT
 | M1 — System Overview & Hardware Info | v0.2.0 | **Done** (`docs/status/m1-system-overview-and-hardware.md`) |
 | M2 — Battery Health & Wear | v0.3.0 (public alpha) | **Done** (`docs/status/m2-battery-health-and-wear.md`) |
 | M3 — Firmware Updates | v0.4.0 (beta) | **Done** (`docs/status/m3-firmware-updates.md`) |
-| M4 — Storage, Diagnostics, Reports | v0.5.0 | Next (entry gate: ADR-0006) |
-| M5 — MVP Hardening & Release | v1.0.0 | Not started |
+| M4 — Storage, Diagnostics, Reports | v0.5.0 | **Done** (`docs/status/m4-storage-diagnostics-reports.md`) |
+| M5 — MVP Hardening & Release | v1.0.0 | Next |
 
 ## M0 — Skeleton & Rails
 
