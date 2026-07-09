@@ -28,8 +28,15 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
       so no optimization was warranted. Smoke test now carries a loose (5 s) regression
       guard to catch order-of-magnitude startup regressions in CI; the real bar stays a
       hardware judgment.
-- [ ] C3 `a11y: keyboard navigation + screen-reader labels + no color-only info` —
-      audit every page against the four ROADMAP criteria; fix gaps; record the audit.
+- [x] C3 `a11y: keyboard navigation + screen-reader labels + no color-only info` —
+      audit of all six pages found exactly two gaps, both fixed: WearChart was silent to
+      screen readers (now role IMG with a data-summarizing label) and drew its day labels
+      with fixed-pixel cairo toy text (now Pango from the widget's font context, label
+      space from real font metrics — respects system font scaling); the app had no
+      keyboard shortcuts (Ctrl+Q quit, Ctrl+W close added). Everything else already
+      passed: stock Adwaita rows/buttons with text labels everywhere, and every colored
+      status pairs its color with words. Audit recorded as a per-release checklist in
+      docs/testing.md.
 - [ ] C4 `hardening: crash audit` — sweep every page's error/degradation paths for
       crashers (GLib criticals, unhandled exceptions in callbacks, re-entrancy); fix what
       the sweep finds.
