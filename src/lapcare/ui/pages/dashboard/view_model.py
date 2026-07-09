@@ -141,5 +141,13 @@ class DashboardViewModel(PageViewModel):
         self.props.uptime = format_uptime(os_info.uptime_seconds)
         self.props.is_thinkpad = thinkpad.is_thinkpad
 
-        log.debug("dashboard ready model=%s thinkpad=%s", self.props.model, thinkpad.is_thinkpad)
+        from lapcare import launch_elapsed_s
+
+        # "First meaningful dashboard content" — the ROADMAP M5 launch metric.
+        log.info(
+            "dashboard ready model=%s thinkpad=%s elapsed=%.3fs",
+            self.props.model,
+            thinkpad.is_thinkpad,
+            launch_elapsed_s() or -1.0,
+        )
         self.show_ready()
