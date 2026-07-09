@@ -28,6 +28,18 @@
   </developer>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.5.0" type="development" date="2026-07-10">
+      <description>
+        <p>Milestone M4: storage health, diagnostics, and report export.</p>
+        <ul>
+          <li>Storage page: disk inventory with SMART/NVMe health after one authorization prompt</li>
+          <li>One-click diagnostics: battery wear, storage, firmware currency, temperatures, disk space</li>
+          <li>Experimental health score on the Dashboard with per-signal confidence</li>
+          <li>Diagnostic report export (Markdown/HTML/JSON), identifiers excluded by default</li>
+          <li>New polkit-mediated privileged helper (one read-only verb) for SMART data</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.4.0" type="development" date="2026-07-08">
       <description>
         <p>Milestone M3, the beta: firmware updates via fwupd/LVFS — device list with available upgrades, metadata refresh, guided update flow with battery preconditions, progress, and reboot handling.</p>

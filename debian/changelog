@@ -1,3 +1,14 @@
+lapcare (0.5.0) unstable; urgency=medium
+
+  * Milestone M4: Storage page (SMART/NVMe health via a new
+    polkit-mediated helper, one read-only verb), one-click diagnostics
+    (battery wear, storage, firmware currency, thermal, disk space),
+    experimental Dashboard health score, and diagnostic report export
+    (MD/HTML/JSON, redacted by default). New dependency pkexec;
+    smartmontools promoted to Recommends.
+
+ -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Fri, 10 Jul 2026 12:00:00 +0000
+
 lapcare (0.4.0) unstable; urgency=medium
 
   * Milestone M3 (beta): Firmware page — device list with available

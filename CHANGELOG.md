@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-07-10 (Milestone M4: Storage, Diagnostics & Reports — BETA)
+
+Supported targets: Ubuntu 24.04 LTS and 26.04 LTS. Reference hardware:
+ThinkPad E16 Gen 2. This release introduces Lapcare's first (and only)
+privileged component: a ~100-line, single-verb, read-only pkexec helper whose
+threat model and validation spec are ADR-0006.
+
+### Added
+
+- **Storage page**: physical disk inventory (model, size, type) with zero
+  prompts; SMART/NVMe health on demand behind ONE administrator authorization
+  (`auth_admin_keep` covers all disks and a follow-up diagnostics run).
+  Failing drives get an unmissable "back up your data" verdict; declining the
+  prompt is a quiet cancellation, never an error.
+- **Diagnostics page**: one-click run of five checks — battery wear, storage
+  health, firmware currency, thermal sanity, disk space — each with an
+  explainable verdict, per-signal confidence, and honest "not measured"
+  states. Completes in seconds.
+- **Health score on the Dashboard** (labeled experimental): a transparent
+  average over the signals measurable without any prompt.
+- **Report export** from the Diagnostics page: Markdown, HTML, or JSON
+  (machine-readable, stable schema). Identifiers such as serial numbers are
+  excluded by design — there is no code path that writes them.
+- Privileged helper `/usr/libexec/lapcare/lapcare-helper` (polkit action
+  `…lapcare.smart-report`): stdlib-only, enumerate-and-match device
+  targeting, covered by a negative/injection test suite (ADR-0006 §18).
+- Providers: `storage_smart` (smartctl JSON via the helper), `hwmon`
+  (temperatures), `disk_usage` (filesystem usage).
+- New dependency `pkexec`; `smartmontools` promoted to Recommends
+  (`nvme-cli` dropped — `smartctl` covers NVMe natively).
+
+### Notes for testers
+
+- The first "Read Health" / "Run Diagnostics" click asks for your password
+  (reading SMART data needs root; fwupd-style). Declining simply skips that
+  data. Everything else remains prompt-free.
+- On the reference E16 Gen 2's SK hynix NVMe, smartctl reports a harmless
+  "Read Self-test Log failed" note — Lapcare surfaces it as a data-quality
+  note; the health data is complete.
+- Please report drives whose health renders oddly — the SMART fixture corpus
+  is young and grows from your reports.
+
 ## [0.4.0] — 2026-07-08 (Milestone M3: Firmware Updates — BETA)
 
 **The beta release.** Still read-only in effect for CI-verifiable paths;

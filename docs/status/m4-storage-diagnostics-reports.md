@@ -1,6 +1,6 @@
 # M4 — Storage Health, Diagnostics & Report Export: Status
 
-**State:** IN PROGRESS. **Branch:** `feature/m4` (single milestone PR, rebase-merged at close).
+**State:** COMPLETE (v0.5.0). **Branch:** `feature/m4` (single milestone PR, rebase-merged).
 **Objective (ROADMAP):** privileged helper + polkit policy; Storage page (SMART/NVMe);
 diagnostics engine + initial checks (battery wear, SMART, firmware currency, thermal sanity,
 disk space); health score on Dashboard (per-signal confidence, labeled experimental); report
@@ -78,28 +78,64 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       read-only probe as the fixture capture, through the actual helper code): real
       smartctl JSON passed the gate with the bit-2 quirk live, no-device-node and
       path-injection rejections verified against the real /sys/block.
-- [ ] C9 `docs: close milestone M4; release v0.5.0`.
+- [x] C9 `docs: close milestone M4; release v0.5.0`.
 
 ## Acceptance criteria (from ROADMAP)
 
-- [ ] SMART data after one polkit prompt (`auth_admin_keep`; verified on the E16 Gen 2 from
-      an installed .deb — maintainer action, same shape as M3's install deferral)
-- [ ] Declining the prompt degrades gracefully (quiet toast; inventory + rest of app
-      unaffected — ADR-0004)
-- [ ] Diagnostics complete in < 10 s
-- [ ] Helper negative/injection suite passes (ADR-0006 §18 list, verbatim)
-- [ ] Health score on Dashboard with per-signal confidence, labeled experimental
-- [ ] Report export in MD/HTML/JSON, redacted by default
-- [ ] `./check` + smoke green both LTS; full lane green at close
-- [ ] Tag `v0.5.0`; GitHub release; CHANGELOG; ROADMAP
+- [ ] SMART data after one polkit prompt — **OPEN, maintainer action** (same shape as
+      M3's install deferral): the helper's full positive path IS verified on the real
+      E16 Gen 2 NVMe (root container + device passthrough, through the actual helper
+      code, real smartctl JSON, live bit-2 quirk), and the injection suite runs it
+      exactly as pkexec would — but the *interactive* pkexec→polkit-agent→helper chain
+      needs a human at a GUI prompt with the .deb installed. One click of "Read Health"
+      on the E16 closes this.
+- [x] Declining the prompt degrades gracefully (quiet toast; inventory + rest of app
+      unaffected — ADR-0004; VM tests assert single-attempt, no prompt storm)
+- [x] Diagnostics complete in < 10 s (pure-core checks over already-bounded provider
+      reads; elapsed time logged on every run — container runs complete in well under 1 s
+      compute + provider I/O)
+- [x] Helper negative/injection suite passes (ADR-0006 §18 list, verbatim — 41 tests)
+- [x] Health score on Dashboard with per-signal confidence, labeled experimental
+      (unprivileged signals only; hides when nothing measurable)
+- [x] Report export in MD/HTML/JSON, redacted by default (by construction: no serial key
+      exists in any renderer input; asserted across all three formats)
+- [x] `./check` + smoke green both LTS; full lane green at close (verified on tag)
+- [x] Tag `v0.5.0`; GitHub release; CHANGELOG; ROADMAP
 
 ## Known deferrals / notes
 
 - The full pkexec→polkit→helper flow needs an installed .deb and an interactive auth agent
   — dev builds and CI degrade to TOOL_MISSING by design (ADR-0006 consequences). CI covers
-  the helper directly (injection suite) and the provider via injected fake runner;
-  the interactive flow is the maintainer's manual-matrix entry.
+  the helper directly (injection suite) and the provider via injected fake runner; the
+  interactive flow is the maintainer's manual-matrix entry (also closes M3's open install
+  criterion in the same session, ideally).
+- ADR-0004's `nvme-report` and `dmi-full` verbs are NOT shipped (demand-driven narrowing,
+  ADR-0006 §3); the report export "include identifiers" opt-in is deferred with `dmi-full`.
+- SATA SMART parsing is fixture-backed by a synthetic case only — the E16 has no SATA bay;
+  a real SATA capture wants a second machine (community/second-ThinkPad item, carried).
 
 ## Retrospective
 
-(at close)
+- **Verify-at-milestone-open paid for itself twice on day one.** Reading upstream
+  pkexec.c before ADR-0006 turned "how do per-verb polkit actions work with one binary"
+  from a guess into a cited fact (`exec.argv1`, realpath before matching, clearenv
+  whitelist) — the design needed zero rework. And the very first real-hardware fixture
+  capture invalidated the ADR's smartctl exit-bitmask policy before the helper shipped:
+  the E16's own NVMe sets bit 2 alongside complete healthy JSON (no self-test log).
+  Fatal bits narrowed to 0-1; a policy written from the man page alone would have
+  rejected the reference machine's healthy drive.
+- **The fixture corpus keeps beating synthetic assumptions**: the same capture session
+  produced the hwmon EC quirk (unpopulated slots reading 2 °C or failing outright) that
+  shaped the thermal check's plausibility bounds, and the CAP_SYS_ADMIN-not-device-node
+  finding for NVMe ioctls.
+- **A new test module is a probe for latent global state.** The storage VM tests
+  exposed a real ADR-0007 scheduler bug (gi.events policy left installed after stop(),
+  breaking any later main-thread asyncio.run on 26.04) purely by sorting alphabetically
+  after test_scheduler.py. Fixed in the scheduler, not the tests.
+- **Demand-driven verbs kept the audit surface honest**: one verb shipped instead of
+  ADR-0004's sketched three; the two unshipped ones have a spec-bound shape waiting for
+  a consumer.
+- **For M5:** no new architecture — hardening, perf (<1.5 s launch), accessibility,
+  PPA pipeline, and the community hardware round. The SMART fixture corpus and the
+  health-score calibration review are the data-hungry items; both grow from beta field
+  reports.
