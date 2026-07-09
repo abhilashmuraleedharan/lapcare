@@ -52,10 +52,16 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
       troubleshooting table); `docs/packaging.md` (paths, deps, the libexecdir/polkit
       exec.path lockstep warning, helper packaging rules, AppStream). Both linked from
       README.
-- [ ] C6 `feat(release): PPA pipeline` — debian source-package build in CI from tags
-      (`ppa-lane`), dput configuration, step-by-step maintainer runbook in
-      docs/release.md; everything short of the upload (needs the maintainer's Launchpad
-      account + GPG key).
+- [x] C6 `feat(release): PPA pipeline` — `tools/ppa-source.sh` builds unsigned
+      per-series source packages in containers (noble + resolute); CI `ppa-lane` produces
+      the same as a tag artifact; docs/release.md gains the full maintainer runbook
+      (one-time Launchpad/GPG setup, sign, dput, and the containerized install-from-PPA
+      verification for the acceptance criterion). **Verified Launchpad-faithfully**: both
+      series' source packages were built to binaries in clean containers with ONLY the
+      declared Build-Depends (`mk-build-deps`) — which caught and fixed two Build-Depends
+      gaps CI's fuller environment had masked (`libglib2.0-bin` for
+      glib-compile-schemas, `gir1.2-gtk-4.0`/`gir1.2-adw-1` for blueprint-compiler's
+      typelib lookup): the first PPA upload would have failed to build without them.
 - [ ] C7 `docs: health-score calibration review` — rationale for current thresholds,
       what field data the beta collects, the calibration procedure for post-1.0 revisions.
 - [ ] C8 `docs: close engineering; hand off release gates` — status updated, ROADMAP

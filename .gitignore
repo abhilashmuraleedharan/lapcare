@@ -35,3 +35,4 @@ debian/*.substvars
 # Local scratch (never committed)
 .scratch/
 .import_linter_cache
+dist-ppa/
