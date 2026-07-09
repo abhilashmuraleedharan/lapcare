@@ -7,6 +7,9 @@ install_data(app_id + '.metainfo.xml',
 install_data(app_id + '.gschema.xml',
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
 )
+install_data(app_id + '.policy',
+  install_dir: get_option('datadir') / 'polkit-1' / 'actions',
+)
 
 desktop_file_validate = find_program('desktop-file-validate', required: false)
 if desktop_file_validate.found()

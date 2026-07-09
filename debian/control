@@ -27,8 +27,8 @@ Depends: ${misc:Depends},
  gir1.2-fwupd-2.0,
  pciutils,
  usbutils,
-Recommends: fwupd, upower
-Suggests: smartmontools, nvme-cli
+ pkexec,
+Recommends: fwupd, upower, smartmontools
 Description: Battery health, firmware updates and diagnostics for ThinkPads
  Lapcare gives ThinkPad owners hardware information, battery health and
  wear analysis, firmware updates via fwupd/LVFS, storage health, one-click

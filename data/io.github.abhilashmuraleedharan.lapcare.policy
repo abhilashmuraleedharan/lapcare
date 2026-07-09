@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+  <vendor>Lapcare</vendor>
+  <vendor_url>https://github.com/abhilashmuraleedharan/lapcare</vendor_url>
+
+  <!-- One action per helper verb (ADR-0004/ADR-0006). exec.path must be the
+       canonical installed helper path (pkexec realpaths before matching);
+       exec.argv1 pins this action to exactly one verb. -->
+  <action id="io.github.abhilashmuraleedharan.lapcare.smart-report">
+    <description>Read storage device health (SMART)</description>
+    <message>Authentication is required to read storage device health (SMART data)</message>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/lapcare/lapcare-helper</annotate>
+    <annotate key="org.freedesktop.policykit.exec.argv1">smart-report</annotate>
+  </action>
+</policyconfig>
