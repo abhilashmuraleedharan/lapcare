@@ -1,7 +1,8 @@
 # M5 — MVP Hardening & Release (v1.0.0): Status
 
-**State:** IN PROGRESS. **Branch:** `feature/m5` (single engineering PR, rebase-merged;
-the v1.0.0 tag itself is gated separately — see Release gates below).
+**State:** ENGINEERING COMPLETE — release gates open (maintainer/community; see below).
+**Branch:** `feature/m5` (single engineering PR, rebase-merged). **The v1.0.0 tag is NOT
+cut**: it waits for the release gates, per this milestone's own acceptance bar.
 **Objective (ROADMAP):** polish, perf, PPA pipeline, user docs, community hardware-test
 round across ≥ 5 ThinkPad models; health-score calibration review.
 
@@ -19,7 +20,7 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
 
 ## Commit plan (engineering PR)
 
-- [ ] C1 `docs: open milestone M5` — this file.
+- [x] C1 `docs: open milestone M5` — this file.
 - [x] C2 `perf: measure and hit the launch bar` — `lapcare.mark_launch()` anchors t0 at
       first package import; "window presented" and "dashboard ready" log elapsed.
       **Measured on the E16 Gen 2's own CPU** (validation containers, xvfb, real host
@@ -66,22 +67,25 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
       every threshold with its provenance, the accepted 1.0 limitations, the field-data
       wishlist the beta should collect, and the revision procedure (constants + this
       table + boundary tests move together; score-structure changes need an ADR).
-- [ ] C8 `docs: close engineering; hand off release gates` — status updated, ROADMAP
-      note, maintainer runbook finalized.
+- [x] C8 `docs: close engineering; hand off release gates` — status updated, ROADMAP
+      marks M5 "engineering done, release gates open", runbooks finalized (PPA:
+      docs/release.md; gates: below).
 
 ## Acceptance criteria (from ROADMAP) and who owns each
 
 - [ ] MVP definition fully met — engineering side done in M0–M4; final judgment at tag
-- [ ] Zero known crashers — C4 sweep (agent) + beta field reports (maintainer triage)
+- [x] Zero known crashers as of the C4 sweep (one silent-blanking field bug found and
+      fixed; beta field reports remain the ongoing source of truth — maintainer triage)
 - [ ] Install-from-PPA works on both LTS — **maintainer** (runbook in C6)
-- [ ] Accessibility: full keyboard navigation; screen-reader labels on all rows; no
-      information by color alone; respects font scaling — C3 (agent)
-- [ ] Performance: < 1.5 s launch → window + first meaningful dashboard content on a
-      mid-range ThinkPad — C2 (agent measures on the E16-class environment; maintainer
-      confirms on the real E16)
+- [x] Accessibility: full keyboard navigation; screen-reader labels on all rows; no
+      information by color alone; respects font scaling — C3 audit, recorded in
+      docs/testing.md as a per-release checklist
+- [x] Performance: < 1.5 s launch → window + first meaningful dashboard content —
+      measured 0.29-0.74 s on the E16 Gen 2's own CPU (C2); native-install confirmation
+      on the E16 desktop session folds into the release gates
 - [ ] Community hardware round ≥ 5 ThinkPad models — **maintainer/community**
-- [ ] Health-score calibration review — C7 document (agent); revision itself needs field
-      data (post-beta)
+- [x] Health-score calibration review — docs/health-score-calibration.md (C7); threshold
+      revisions themselves need beta field data, procedure documented
 
 ## Release gates (maintainer runbook — v1.0.0 tag blocked on these)
 
@@ -92,6 +96,22 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
    "Read Health" polkit prompt (M4).
 4. Then: version bump to 1.0.0, CHANGELOG, tag, release — the standard close.
 
-## Retrospective
+## Retrospective (engineering half)
 
-(at close)
+- **Clean-room verification found what CI could not, again.** CI installs
+  tools/install-deps.sh before building the .deb, so two missing Build-Depends
+  (libglib2.0-bin; the GTK/Adw typelibs blueprint-compiler resolves `using` against)
+  were invisible until the Launchpad-faithful check (extract .dsc, mk-build-deps, build)
+  ran in a genuinely clean container. The first real PPA upload would have failed.
+  Environments that pre-install "obviously present" packages hide packaging truth —
+  same lesson shape as M3's dbusmock assumption and M4's smartctl bitmask.
+- **The one real hardening find was silent, not loud**: AdwPreferencesRow parses titles
+  as Pango markup by default, so a hardware string containing `&` blanks the row with
+  only a Gtk-WARNING — below the smoke test's CRITICAL threshold. Data-dependent UI
+  bugs need *warning-level* assertions; smoke now fails on "Failed to set text".
+- **The perf bar cost nothing because the architecture already paid**: async-first
+  provider I/O and a plain GTK shell landed at 0.29-0.74 s against a 1.5 s bar. The
+  instrumentation (mark_launch + elapsed logs) was the whole job.
+- **Split-milestone framing worked**: declaring up front which acceptance criteria an
+  agent cannot honestly satisfy (PPA upload, community round, interactive prompts) kept
+  the engineering PR shippable without faking the milestone's bar.
