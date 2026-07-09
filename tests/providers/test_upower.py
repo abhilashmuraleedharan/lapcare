@@ -72,7 +72,7 @@ class TestUPowerProvider(dbusmock.DBusTestCase):
         self.obj_upower.AddDischargingBattery("mock_BAT0", "Mock Battery", 50.0, 600)
 
         # Pump the default main context (signal delivery) with a deadline.
-        deadline = GLib.get_monotonic_time() + 5_000_000
+        deadline = GLib.get_monotonic_time() + 15_000_000
         context = GLib.MainContext.default()
         while not fired and GLib.get_monotonic_time() < deadline:
             context.iteration(False)

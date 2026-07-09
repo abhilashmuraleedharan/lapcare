@@ -1,0 +1,8 @@
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev 0 0
+/dev/nvme0n1p2 / ext4 rw,relatime,errors=remount-ro 0 0
+/dev/nvme0n1p2 /var/lib/docker ext4 rw,relatime 0 0
+/dev/nvme0n1p1 /boot/efi vfat rw,relatime 0 0
+/dev/sda1 /mnt/usb\040drive ext4 rw,relatime 0 0
+overlay /var/lib/docker/overlay2/x/merged overlay rw,relatime 0 0

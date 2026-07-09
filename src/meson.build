@@ -14,6 +14,7 @@ py.install_sources(
     'lapcare/core/__init__.py',
     'lapcare/core/battery_analysis.py',
     'lapcare/core/errors.py',
+    'lapcare/core/diagnostics.py',
     'lapcare/core/firmware_policy.py',
     'lapcare/core/models.py',
     'lapcare/core/ports.py',
@@ -24,8 +25,10 @@ py.install_sources(
   [
     'lapcare/providers/__init__.py',
     'lapcare/providers/battery_sysfs.py',
+    'lapcare/providers/disk_usage.py',
     'lapcare/providers/dmi.py',
     'lapcare/providers/fwupd.py',
+    'lapcare/providers/hwmon.py',
     'lapcare/providers/os_info.py',
     'lapcare/providers/pci_usb.py',
     'lapcare/providers/storage_smart.py',
