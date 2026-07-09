@@ -6,7 +6,12 @@ port-composing → `src/lapcare/providers/thinkpad_acpi.py`; raw D-Bus →
 `src/lapcare/providers/upower.py`; GObject-Introspection library over D-Bus →
 `src/lapcare/providers/fwupd.py` (tested against a local dbusmock template under
 `tests/dbusmock_templates/` when python-dbusmock ships none; D-Bus test classes share ONE
-session-wide private system bus — see `tests/providers/conftest.py`).
+session-wide private system bus — see `tests/providers/conftest.py`); privileged
+(pkexec-helper-backed) → `src/lapcare/providers/storage_smart.py` — the client side of
+ADR-0006: the helper is invoked via the audited runner's `pkexec` entry, 126/127 map to
+`PrivilegedActionDenied`, and the helper's stderr codes are the error protocol. New
+privileged data = a new helper VERB (ADR-0006 §3-4 + its §18 test rows), never a new
+invocation style.
 
 A provider is the ONE module that knows a data source's paths, formats, and quirks.
 Checklist:

@@ -69,9 +69,15 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       verb — unprivileged Lapcare cannot read the DMI serial, so the toggle would be a
       lie today (recorded in core/report.py). `ReportWriter` port + atomic platform
       writer (temp file + rename). Export failure = toast, never a page state.
-- [ ] C8 `docs: module docs + adding-a-diagnostic guide` — providers.md sections
-      (storage_smart, hwmon, disk_usage), `docs/guides/adding-a-diagnostic.md` (promised by
-      AGENTS.md routing table since M0), security-design.md pointer to ADR-0006.
+- [x] C8 `docs: module docs + adding-a-diagnostic guide` — providers.md sections
+      (storage_smart, hwmon, disk_usage — 13 evidence-backed quirks), the
+      `docs/guides/adding-a-diagnostic.md` guide (promised by AGENTS.md routing since M0),
+      security-design.md updated to shipped-helper reality, adding-a-provider gains the
+      privileged-provider reference. **Also: helper positive path validated end-to-end on
+      the real E16 NVMe** (root container + device passthrough + CAP_SYS_ADMIN — the same
+      read-only probe as the fixture capture, through the actual helper code): real
+      smartctl JSON passed the gate with the bit-2 quirk live, no-device-node and
+      path-injection rejections verified against the real /sys/block.
 - [ ] C9 `docs: close milestone M4; release v0.5.0`.
 
 ## Acceptance criteria (from ROADMAP)
