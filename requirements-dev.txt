@@ -4,7 +4,7 @@
 ruff>=0.5
 mypy>=1.10
 import-linter>=2.0
-pytest>=8.0
+pytest>=9.1.1
 pytest-asyncio>=0.23
 # NOTE: PyGObject-stubs deliberately absent — it drags in a from-source
 # PyGObject build (C toolchain) in clean containers; mypy handles gi.* via
