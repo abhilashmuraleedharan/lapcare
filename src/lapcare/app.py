@@ -143,7 +143,9 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 ]
                 window = MainWindow(application=self, pages=pages)
             window.present()
-            log.info("window presented")
+            from lapcare import launch_elapsed_s
+
+            log.info("window presented elapsed=%.3fs", launch_elapsed_s() or -1.0)
 
             # Dev/CI hook (used by the smoke test): auto-quit after N ms.
             auto_quit_ms = os.environ.get("LAPCARE_AUTO_QUIT_MS")

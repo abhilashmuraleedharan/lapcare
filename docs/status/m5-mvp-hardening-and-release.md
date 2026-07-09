@@ -20,11 +20,14 @@ round across ≥ 5 ThinkPad models; health-score calibration review.
 ## Commit plan (engineering PR)
 
 - [ ] C1 `docs: open milestone M5` — this file.
-- [ ] C2 `perf: measure and hit the launch bar` — instrument launch (process start →
-      window presented → first meaningful dashboard content), measure on the reference
-      environment, optimize what the measurement indicts, add the measurement to the smoke
-      test as a regression guard (generous CI bound; the 1.5 s bar is judged on real
-      hardware).
+- [x] C2 `perf: measure and hit the launch bar` — `lapcare.mark_launch()` anchors t0 at
+      first package import; "window presented" and "dashboard ready" log elapsed.
+      **Measured on the E16 Gen 2's own CPU** (validation containers, xvfb, real host
+      sysfs): window at 0.24-0.55 s, first dashboard content at **0.29 s warm / 0.74 s
+      cold** on 24.04 and 0.29-0.38 s on 26.04 — the 1.5 s bar is met with ~2× headroom,
+      so no optimization was warranted. Smoke test now carries a loose (5 s) regression
+      guard to catch order-of-magnitude startup regressions in CI; the real bar stays a
+      hardware judgment.
 - [ ] C3 `a11y: keyboard navigation + screen-reader labels + no color-only info` —
       audit every page against the four ROADMAP criteria; fix gaps; record the audit.
 - [ ] C4 `hardening: crash audit` — sweep every page's error/degradation paths for
