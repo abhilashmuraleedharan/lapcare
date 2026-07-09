@@ -185,3 +185,32 @@ async def test_non_object_json_is_parse_error() -> None:
     runner = FakeRunner(stdout=json.dumps([1, 2, 3]))
     with pytest.raises(ProviderParseError):
         await StorageSmartPkexec(runner=runner).read_smart("sda")
+
+
+async def test_hostile_json_types_map_to_none_never_crash() -> None:
+    # The helper guarantees valid JSON, not a valid SCHEMA (ADR-0006 §12/§16):
+    # every field read must survive adversarial/broken types.
+    hostile = {
+        "smart_status": "banana",
+        "temperature": [1, 2],
+        "power_on_time": {"hours": "many"},
+        "power_cycle_count": True,  # bool is not an int here
+        "nvme_smart_health_information_log": 7,
+        "ata_smart_attributes": {"table": {"id": 5}},
+        "model_name": 3,
+        "firmware_version": "",
+        "serial_number": None,
+        "smartctl": {"messages": [{"string": 42}, "nope", {"no_string": 1}]},
+    }
+    runner = FakeRunner(stdout=json.dumps(hostile))
+    report = await StorageSmartPkexec(runner=runner).read_smart("sda")
+    assert report.passed is None
+    assert report.temperature_c is None
+    assert report.power_on_hours is None
+    assert report.power_cycles is None
+    assert report.percentage_used is None
+    assert report.reallocated_sectors is None
+    assert report.model is None
+    assert report.firmware_version is None
+    assert report.serial_number is None
+    assert report.messages == ()

@@ -54,6 +54,10 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
 
     assert proc.returncode == 0, f"app exited {proc.returncode}:\n{output}"
     assert "CRITICAL" not in output, f"GTK criticals in output:\n{output}"
+    # Hardware-derived strings must never be parsed as Pango markup: a stray
+    # '&' in a device model would silently BLANK the row (measured; the fix
+    # is use_markup=False on every hardware-string row).
+    assert "Failed to set text" not in output, f"markup parsing regression:\n{output}"
     assert "window presented" in output, output
     assert "smoke: visited all pages" in output, output
     assert "smoke: cycled all states" in output, output  # reference page states
