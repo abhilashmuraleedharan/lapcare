@@ -27,6 +27,8 @@ from lapcare.core.models import (
     FirmwareRelease,
     OsInfo,
     PciDevice,
+    SmartReport,
+    StorageDevice,
     SystemIdentity,
     ThinkpadInfo,
     UsbDevice,
@@ -147,6 +149,24 @@ class FirmwareProvider(Protocol):
     def subscribe(self, on_change: Callable[[], None]) -> None:
         """Invoke ``on_change`` on the GTK main thread on device/remote changes."""
         ...
+
+
+class StorageProvider(Protocol):
+    """Block-device inventory and SMART health (providers.storage_smart).
+
+    ``list_devices()`` is unprivileged (/sys/block) and never prompts.
+    ``read_smart()`` goes through the ADR-0006 pkexec helper: the FIRST call
+    may raise a polkit auth prompt (``auth_admin_keep`` covers followers), so
+    the UI must only call it from a visually privilege-marked action
+    (ADR-0004). Raises ``PrivilegedActionDenied`` on declined auth — quiet
+    degradation, never an error page.
+    """
+
+    def availability(self) -> Availability: ...
+
+    async def list_devices(self) -> list[StorageDevice]: ...
+
+    async def read_smart(self, device_name: str) -> SmartReport: ...
 
 
 class HistoryStore(Protocol):

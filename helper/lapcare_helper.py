@@ -25,10 +25,11 @@ SMARTCTL = "/usr/sbin/smartctl"
 CHILD_ENV = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "LC_ALL": "C.UTF-8"}
 TOOL_TIMEOUT_S = 25
 MAX_OUTPUT_BYTES = 4 * 1024 * 1024
-# smartctl's exit status is a bitmask: bits 0-2 (usage error, device open
-# failed, SMART command failed) are hard failures; bits 3-7 are health
-# FINDINGS delivered alongside valid JSON — a failing disk is data (ADR-0006).
-_FATAL_SMARTCTL_BITS = 0b00000111
+# smartctl's exit status is a bitmask: bit 0 (usage error) and bit 1 (device
+# open failed) mean there is no report; every other bit coexists with valid
+# JSON — bits 3-7 are health FINDINGS and bit 2 fires even on healthy drives
+# that lack an optional log (measured on the E16 Gen 2's NVMe; ADR-0006 §12).
+_FATAL_SMARTCTL_BITS = 0b00000011
 
 
 def _fail(code: str, detail: str = "") -> NoReturn:

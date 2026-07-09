@@ -178,11 +178,13 @@ def test_matched_device_passes_json_through(
     assert capfdbinary.readouterr().out == GOOD_JSON
 
 
-@pytest.mark.parametrize("rc", [8, 0xF8])
+@pytest.mark.parametrize("rc", [4, 8, 0xF8, 0xFC])
 def test_failing_disk_bits_are_data_not_error(
     rc: int, capfdbinary: pytest.CaptureFixture[bytes]
 ) -> None:
-    # bits 3-7 (e.g. 8 = "disk failing", 0xF8 = all findings) still emit JSON.
+    # bits 2-7 still emit JSON: 8 = "disk failing" is a finding, and 4 =
+    # "a SMART command failed" fires on healthy drives that lack an optional
+    # log (the E16 Gen 2's own NVMe does this — ADR-0006 §12).
     helper = load_helper()
     helper.os = fake_os()
     helper.subprocess = fake_subprocess(returncode=rc)
@@ -190,7 +192,7 @@ def test_failing_disk_bits_are_data_not_error(
     assert capfdbinary.readouterr().out == GOOD_JSON
 
 
-@pytest.mark.parametrize("rc", [1, 2, 4, 7, -9])
+@pytest.mark.parametrize("rc", [1, 2, 3, -9])
 def test_fatal_smartctl_exits_are_tool_failed(rc: int, capsys: pytest.CaptureFixture[str]) -> None:
     helper = load_helper()
     helper.os = fake_os()

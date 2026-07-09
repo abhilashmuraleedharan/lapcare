@@ -25,11 +25,17 @@ C1, before any helper code. Key narrowing vs. ADR-0004's sketch: M4 ships **one*
       install verified in-container (0755, canonical libexec path, policy in
       polkit-1/actions); debhelper compat-13 confirmed NOT to override libexecdir (the
       `lib/$multiarch` override is compat ≤ 11 only — checked upstream meson.pm).
-- [ ] C3 `feat(core)+provider: storage models, port, storage_smart` — `StorageDevice` /
-      `SmartHealth` models, `StorageProvider` port, unprivileged `/sys/block` inventory,
-      `smartctl --json` parsing behind the helper via the audited runner (`pkexec` joins
-      `ALLOWED_TOOLS`; 126/127 → `PrivilegedActionDenied`), serial redaction at the parse
-      boundary (ADR-0006 §17). Fixtures captured from the real E16 Gen 2 NVMe.
+- [x] C3 `feat(core)+provider: storage models, port, storage_smart` — `StorageDevice` /
+      `SmartReport` models, `StorageProvider` port, unprivileged `/sys/block` inventory
+      (physical = has a `device/` subdir; loop/zram/dm are skipped), `smartctl --json`
+      parsing behind the helper via the audited runner (`pkexec` joins `ALLOWED_TOOLS`;
+      126/127 → `PrivilegedActionDenied`; §13 stderr codes mapped), serial in its own
+      identifier field (ADR-0006 §17). Fixtures captured from the real E16 Gen 2 NVMe
+      (read-only `smartctl` in a container with the device passed through + CAP_SYS_ADMIN),
+      redacted at capture; synthetic failing-SATA case alongside. **Finding that reshaped
+      ADR-0006 §12 pre-merge:** the E16's SK hynix NVMe lacks the optional self-test log,
+      so `smartctl --all` sets exit bit 2 alongside complete healthy JSON — bit 2 is data
+      quality, not failure; helper fatal bits narrowed to 0-1.
 - [ ] C4 `feat(ui): Storage page` — unprivileged inventory renders with zero prompts;
       "Read health" action carries the lock emblem; declined auth = quiet toast; per-device
       degradation.

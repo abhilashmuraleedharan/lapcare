@@ -25,6 +25,10 @@ log = logging.getLogger(__name__)
 ALLOWED_TOOLS: dict[str, tuple[str, ...]] = {
     "lspci": ("/usr/bin/lspci",),
     "lsusb": ("/usr/bin/lsusb",),
+    # ADR-0006 §15: the only privileged entry point. Callers pass the helper's
+    # canonical path + verb as args and MUST use a timeout that allows for the
+    # interactive polkit prompt (a human typing a password).
+    "pkexec": ("/usr/bin/pkexec",),
 }
 
 MAX_OUTPUT_BYTES = 8 * 1024 * 1024
