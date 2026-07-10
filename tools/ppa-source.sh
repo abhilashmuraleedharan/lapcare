@@ -43,6 +43,7 @@ for series in $SERIES; do
                 --force-distribution 'PPA upload for ${series}.'
             dpkg-buildpackage -S -us -uc -d
             cp ../lapcare_* /out/
+            chown -R $(id -u):$(id -g) /out
         "
 done
 
