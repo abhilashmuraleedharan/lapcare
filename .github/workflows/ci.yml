@@ -96,7 +96,7 @@ jobs:
             GTK_A11Y=none lapcare --verbose
 
       - name: Upload .deb artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lapcare-deb-ubuntu-${{ matrix.lts }}
           path: dist-deb/*.deb
@@ -135,7 +135,7 @@ jobs:
           done
 
       - name: Upload source-package artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lapcare-ppa-source
           path: dist-ppa/
