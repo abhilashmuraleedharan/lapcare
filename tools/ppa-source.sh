@@ -20,6 +20,14 @@ REV="${1:-1}"
 VERSION="$(sed -n "s/^  version: '\(.*\)',$/\1/p" "${HERE}/meson.build")"
 [ -n "$VERSION" ] || { echo "could not read version from meson.build" >&2; exit 1; }
 
+# DEBEMAIL/DEBFULLNAME are the standard devscripts identity variables; honor
+# them if the caller already has their own set, otherwise derive from
+# debian/control's Maintainer field so there is one source of truth instead
+# of a hardcoded identity duplicated across build scripts.
+MAINTAINER="$(sed -n 's/^Maintainer: //p' "${HERE}/debian/control")"
+DEBFULLNAME="${DEBFULLNAME:-${MAINTAINER%% <*}}"
+DEBEMAIL="${DEBEMAIL:-$(printf '%s' "$MAINTAINER" | sed -n 's/.*<\(.*\)>.*/\1/p')}"
+
 # Target Ubuntu LTS series (docs/testing.md targets): 24.04, 26.04.
 SERIES="noble resolute"
 BUILDER_IMAGE="ubuntu:24.04"
@@ -31,8 +39,8 @@ for series in $SERIES; do
     echo "== source package for ${series} (${VERSION}+ppa${REV}~${series}1) =="
     docker run --rm \
         -v "$HERE:/src:ro" -v "$OUT/$series:/out" \
-        -e "DEBEMAIL=amuraleedharan13@gmail.com" \
-        -e "DEBFULLNAME=Abhilash Muraleedharan" \
+        -e "DEBEMAIL=${DEBEMAIL}" \
+        -e "DEBFULLNAME=${DEBFULLNAME}" \
         "$BUILDER_IMAGE" sh -ec "
             export DEBIAN_FRONTEND=noninteractive
             apt-get update -qq && apt-get install -y -qq --no-install-recommends \

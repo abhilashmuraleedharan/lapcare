@@ -7,7 +7,7 @@ lapcare (0.5.0) unstable; urgency=medium
     (MD/HTML/JSON, redacted by default). New dependency pkexec;
     smartmontools promoted to Recommends.
 
- -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Fri, 10 Jul 2026 12:00:00 +0000
+ -- Abhilash Muraleedharan <abhilashmuraleedharan@outlook.com>  Fri, 10 Jul 2026 12:00:00 +0000
 
 lapcare (0.4.0) unstable; urgency=medium
 
@@ -16,7 +16,7 @@ lapcare (0.4.0) unstable; urgency=medium
     (battery preconditions, progress, reboot-required, retryable
     failures); new runtime dependency gir1.2-fwupd-2.0.
 
- -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Wed, 08 Jul 2026 12:00:00 +0000
+ -- Abhilash Muraleedharan <abhilashmuraleedharan@outlook.com>  Wed, 08 Jul 2026 12:00:00 +0000
 
 lapcare (0.3.0) unstable; urgency=medium
 
@@ -25,7 +25,7 @@ lapcare (0.3.0) unstable; urgency=medium
     history with chart, dual-battery support; capture tool learns
     battery data.
 
- -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Tue, 07 Jul 2026 18:00:00 +0000
+ -- Abhilash Muraleedharan <abhilashmuraleedharan@outlook.com>  Tue, 07 Jul 2026 18:00:00 +0000
 
 lapcare (0.2.0) unstable; urgency=medium
 
@@ -33,11 +33,11 @@ lapcare (0.2.0) unstable; urgency=medium
     (DMI identity, OS info, ThinkPad detection, PCI/USB inventory);
     fixture capture tool with capture-time redaction.
 
- -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Tue, 07 Jul 2026 12:00:00 +0000
+ -- Abhilash Muraleedharan <abhilashmuraleedharan@outlook.com>  Tue, 07 Jul 2026 12:00:00 +0000
 
 lapcare (0.1.0) unstable; urgency=medium
 
   * Milestone M0: project skeleton and development rails. Not a usable
     release — window shell, reference page, build/CI infrastructure.
 
- -- Abhilash Muraleedharan <amuraleedharan13@gmail.com>  Mon, 07 Jul 2026 03:00:00 +0000
+ -- Abhilash Muraleedharan <abhilashmuraleedharan@outlook.com>  Mon, 07 Jul 2026 03:00:00 +0000
