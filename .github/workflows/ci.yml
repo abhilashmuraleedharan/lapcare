@@ -26,7 +26,7 @@ jobs:
     container: ubuntu:26.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install system dependencies
         run: sh tools/install-deps.sh
@@ -59,7 +59,7 @@ jobs:
       matrix:
         lts: ["24.04", "26.04"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install system dependencies
         run: sh tools/install-deps.sh
@@ -96,7 +96,7 @@ jobs:
             GTK_A11Y=none lapcare --verbose
 
       - name: Upload .deb artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lapcare-deb-ubuntu-${{ matrix.lts }}
           path: dist-deb/*.deb
@@ -113,7 +113,7 @@ jobs:
     container: ubuntu:24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build per-series source packages
         run: |
@@ -140,7 +140,7 @@ jobs:
           done
 
       - name: Upload source-package artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lapcare-ppa-source
           path: dist-ppa/
