@@ -26,7 +26,7 @@ jobs:
     container: ubuntu:26.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install system dependencies
         run: sh tools/install-deps.sh
@@ -59,7 +59,7 @@ jobs:
       matrix:
         lts: ["24.04", "26.04"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install system dependencies
         run: sh tools/install-deps.sh
@@ -113,7 +113,7 @@ jobs:
     container: ubuntu:24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build per-series source packages
         run: |
