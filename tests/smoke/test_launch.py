@@ -14,6 +14,7 @@ Any GTK/GLib/Adwaita CRITICAL in the app's output fails the test.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -53,6 +54,10 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
 
     assert proc.returncode == 0, f"app exited {proc.returncode}:\n{output}"
     assert "CRITICAL" not in output, f"GTK criticals in output:\n{output}"
+    # Hardware-derived strings must never be parsed as Pango markup: a stray
+    # '&' in a device model would silently BLANK the row (measured; the fix
+    # is use_markup=False on every hardware-string row).
+    assert "Failed to set text" not in output, f"markup parsing regression:\n{output}"
     assert "window presented" in output, output
     assert "smoke: visited all pages" in output, output
     assert "smoke: cycled all states" in output, output  # reference page states
@@ -70,6 +75,15 @@ def test_app_launches_cycles_all_states_and_quits_cleanly() -> None:
     assert "storage ready" in output or "storage unavailable" in output, output
     # Diagnostics opens ready without running anything (no prompts at launch).
     assert "diagnostics ready (idle)" in output, output
+    # Launch-time regression guard (ROADMAP M5: < 1.5 s to window + first
+    # dashboard content on a mid-range ThinkPad). Measured 0.29-0.74 s on the
+    # reference E16 Gen 2; the CI bound is deliberately loose — shared
+    # runners are slow and cold — and exists to catch order-of-magnitude
+    # regressions (a new sync call on the startup path), not to enforce the
+    # real bar, which is judged on hardware.
+    match = re.search(r"dashboard ready .* elapsed=([0-9.]+)s", output)
+    assert match, f"no dashboard elapsed metric in output:\n{output}"
+    assert float(match.group(1)) < 5.0, f"launch regression: {match.group(1)}s\n{output}"
     # Dashboard health score: computed from unprivileged signals only; a
     # container with thermal+disk visible always measures something.
     assert "health score=" in output or "health score unavailable" in output, output

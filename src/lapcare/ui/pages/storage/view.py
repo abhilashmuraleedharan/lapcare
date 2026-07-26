@@ -67,19 +67,19 @@ class StoragePage(Adw.Bin):
 
     def _device_row(self, card: StorageCard) -> Gtk.Widget:
         if not card.health_rows:
-            row = Adw.ActionRow(title=card.title, subtitle=card.subtitle)
+            row = Adw.ActionRow(title=card.title, subtitle=card.subtitle, use_markup=False)
             row.add_css_class("property")
             if card.health_note:
                 row.set_subtitle(f"{card.subtitle} — {card.health_note}")
             return row
 
-        expander = Adw.ExpanderRow(title=card.title, subtitle=card.subtitle)
+        expander = Adw.ExpanderRow(title=card.title, subtitle=card.subtitle, use_markup=False)
         summary = Gtk.Label(label=card.health_summary, valign=Gtk.Align.CENTER)
         summary.add_css_class("error" if card.health_failed else "success")
         expander.add_suffix(summary)
         expander.set_expanded(True)
         for label, value in card.health_rows:
-            detail = Adw.ActionRow(title=label, subtitle=value)
+            detail = Adw.ActionRow(title=label, subtitle=value, use_markup=False)
             detail.add_css_class("property")
             expander.add_row(detail)
         return expander

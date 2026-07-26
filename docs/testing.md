@@ -55,3 +55,21 @@ work on this model before a milestone closes — it is the first fixture source 
 manual-matrix entry. Note for providers: the E-series can differ from T/X-series in
 thinkpad_acpi surface (fan reporting, LED set) — never assume T-series behavior is universal;
 that's what the fixture corpus is for.
+
+## Accessibility checklist (ROADMAP M5 criteria; re-check each release)
+
+Audited at M5 across all six pages; the criteria and how each is met:
+
+- **Full keyboard navigation** — stock GTK4/Adwaita widgets throughout (ListBox sidebar,
+  ActionRow/ExpanderRow content, focusable buttons); app shortcuts `Ctrl+Q` (quit) and
+  `Ctrl+W` (close window) registered in app.py. No custom widget captures focus.
+- **Screen-reader labels on all rows** — every row is an Adw.ActionRow/ExpanderRow with a
+  real title (accessible label for free); every button uses Adw.ButtonContent with a text
+  label, never icon-only. The one drawing widget (WearChart) reports role IMG with a label
+  that summarizes the series data (count, first/last day + wear).
+- **No information by color alone** — every colored status (diagnostics verdicts, storage
+  health summary, battery health class) pairs the CSS color with words carrying the same
+  meaning ("Critical", "FAILING — back up your data now", "Good · 5% wear").
+- **Respects font scaling** — no fixed-pixel text anywhere: WearChart's day labels are laid
+  out with Pango from the widget's own font context (scaled, not cairo toy text), and the
+  chart reserves label space from the actual font metrics at draw time.

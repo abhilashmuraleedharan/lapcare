@@ -12,7 +12,7 @@ security fixes for the previous one.
 
 Report privately via **GitHub private vulnerability reporting**:
 [Security → Report a vulnerability](https://github.com/abhilashmuraleedharan/lapcare/security/advisories/new)
-on this repository. If that is unavailable to you, email **amuraleedharan13@gmail.com** with
+on this repository. If that is unavailable to you, email **abhilashmuraleedharan@outlook.com** with
 `[lapcare security]` in the subject line.
 
 You can expect an acknowledgement within **7 days** and a status assessment within **30

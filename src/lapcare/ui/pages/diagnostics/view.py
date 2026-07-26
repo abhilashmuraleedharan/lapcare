@@ -102,13 +102,13 @@ class DiagnosticsPage(Adw.Bin):
 
     def _check_row(self, card: CheckCard) -> Gtk.Widget:
         if not card.evidence:
-            row = Adw.ActionRow(title=card.title, subtitle=card.subtitle)
+            row = Adw.ActionRow(title=card.title, subtitle=card.subtitle, use_markup=False)
             self._add_status_suffix(row, card)
             return row
-        expander = Adw.ExpanderRow(title=card.title, subtitle=card.subtitle)
+        expander = Adw.ExpanderRow(title=card.title, subtitle=card.subtitle, use_markup=False)
         self._add_status_suffix(expander, card)
         for label, value in card.evidence:
-            detail = Adw.ActionRow(title=label, subtitle=value)
+            detail = Adw.ActionRow(title=label, subtitle=value, use_markup=False)
             detail.add_css_class("property")
             expander.add_row(detail)
         return expander

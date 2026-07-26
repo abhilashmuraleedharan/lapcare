@@ -83,6 +83,7 @@ class HardwarePage(Adw.Bin):
             row = Adw.ActionRow(
                 title=f"{pci.vendor or '?'} — {pci.device or '?'}",
                 subtitle=f"{pci.slot} · {pci.device_class or ''}".strip(" ·"),
+                use_markup=False,
             )
             self.pci_expander.add_row(row)
             self._device_rows.append(row)
@@ -98,6 +99,7 @@ class HardwarePage(Adw.Bin):
                 title=usb.name or _("Unknown device"),
                 subtitle=f"{usb.vendor_id}:{usb.product_id} · "
                 + _("bus %(b)s device %(d)s") % {"b": usb.bus, "d": usb.device},
+                use_markup=False,
             )
             self.usb_expander.add_row(row)
             self._device_rows.append(row)

@@ -86,6 +86,12 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 application_id=APP_ID,
                 flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
             )
+            # Keyboard access (ROADMAP M5): standard GNOME app shortcuts.
+            quit_action = Gio.SimpleAction.new("quit", None)
+            quit_action.connect("activate", lambda *_a: self.quit())
+            self.add_action(quit_action)
+            self.set_accels_for_action("app.quit", ["<Control>q"])
+            self.set_accels_for_action("window.close", ["<Control>w"])
 
         def do_activate(self) -> None:
             window = self.props.active_window
@@ -143,7 +149,9 @@ def _build_application(scheduler):  # -> Adw.Application (typed loosely: gi is u
                 ]
                 window = MainWindow(application=self, pages=pages)
             window.present()
-            log.info("window presented")
+            from lapcare import launch_elapsed_s
+
+            log.info("window presented elapsed=%.3fs", launch_elapsed_s() or -1.0)
 
             # Dev/CI hook (used by the smoke test): auto-quit after N ms.
             auto_quit_ms = os.environ.get("LAPCARE_AUTO_QUIT_MS")

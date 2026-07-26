@@ -86,7 +86,9 @@ class FirmwarePage(Adw.Bin):
         title = _("Version %s") % release.version
         if release.urgency in URGENCY_TEXT:
             title = f"{title} · {URGENCY_TEXT[release.urgency]}"
-        row = Adw.ActionRow(title=title, subtitle=release.summary or release.name or "")
+        row = Adw.ActionRow(
+            title=title, subtitle=release.summary or release.name or "", use_markup=False
+        )
         button = Gtk.Button(valign=Gtk.Align.CENTER)
         content = Adw.ButtonContent(label=_("Install…"), icon_name="changes-prevent-symbolic")
         button.set_child(content)
@@ -115,6 +117,7 @@ class FirmwarePage(Adw.Bin):
         for card in self._vm.cards:
             if card.releases:
                 expander = Adw.ExpanderRow(
+                    use_markup=False,
                     title=card.title,
                     subtitle=_("%(version)s → %(new)s available")
                     % {"version": card.version_text, "new": card.releases[0].version},
@@ -125,7 +128,7 @@ class FirmwarePage(Adw.Bin):
                 group.add(expander)
                 continue
 
-            row = Adw.ActionRow(title=card.title)
+            row = Adw.ActionRow(title=card.title, use_markup=False)
             row.add_css_class("property")
             if card.upgrade_note:
                 row.set_subtitle(f"{card.version_text} — {card.upgrade_note}")
@@ -145,7 +148,7 @@ class FirmwarePage(Adw.Bin):
 
         if self._vm.props.result_text:
             done = Adw.PreferencesGroup(title=_("Last Update"))
-            note = Adw.ActionRow(title=self._vm.props.result_text)
+            note = Adw.ActionRow(title=self._vm.props.result_text, use_markup=False)
             note.add_css_class("property")
             done.add(note)
             self.devices_container.append(done)
