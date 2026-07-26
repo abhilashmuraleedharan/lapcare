@@ -117,11 +117,16 @@ jobs:
 
       - name: Build per-series source packages
         run: |
-          export DEBIAN_FRONTEND=noninteractive DEBEMAIL="amuraleedharan13@gmail.com" \
-            DEBFULLNAME="Abhilash Muraleedharan"
+          export DEBIAN_FRONTEND=noninteractive
           apt-get update
           apt-get install -y --no-install-recommends devscripts debhelper dpkg-dev
           VERSION=$(sed -n "s/^  version: '\(.*\)',$/\1/p" meson.build)
+          # DEBEMAIL/DEBFULLNAME: derive from debian/control's Maintainer
+          # field (single source of truth) rather than hardcoding the
+          # identity a second time here.
+          MAINTAINER=$(sed -n 's/^Maintainer: //p' debian/control)
+          export DEBFULLNAME="${DEBFULLNAME:-${MAINTAINER%% <*}}"
+          export DEBEMAIL="${DEBEMAIL:-$(printf '%s' "$MAINTAINER" | sed -n 's/.*<\(.*\)>.*/\1/p')}"
           for series in noble resolute; do
             git config --global --add safe.directory "$PWD" || true
             cp -a . /tmp/lapcare-$series && cd /tmp/lapcare-$series
