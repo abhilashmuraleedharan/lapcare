@@ -3,7 +3,7 @@
 # monthly; CI catches breakage.
 ruff>=0.16.0
 mypy>=2.3.0
-import-linter>=2.13
+import-linter>=2.14
 pytest>=9.1.1
 pytest-asyncio>=1.4.0
 # NOTE: PyGObject-stubs deliberately absent — it drags in a from-source
